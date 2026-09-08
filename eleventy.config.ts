@@ -73,7 +73,7 @@ export default function configure(eleventyConfig: EleventyConfig) {
     DateTime.fromISO(value, { zone: site.timezone }).toFormat("LLL d"),
   );
 
-  eleventyConfig.addFilter("limit", <T,>(items: T[], count: number) => items.slice(0, count));
+  eleventyConfig.addFilter("limit", <T>(items: T[], count: number) => items.slice(0, count));
 
   eleventyConfig.addFilter("absoluteUrl", (path: string) => new URL(path, site.url).toString());
 

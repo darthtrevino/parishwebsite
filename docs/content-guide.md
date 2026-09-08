@@ -1,20 +1,20 @@
 # Editing the Website
 
-You do not need to be a programmer to update this site. Most changes are edits to a text file,
-made directly in GitHub's web editor.
+You do not need to be a programmer to update this site. Most changes are edits to a text file, made
+directly in GitHub's web editor.
 
 ## Where things live
 
-| What you want to change | File |
-| --- | --- |
-| Address, phone, email, service times, social links | `src/_data/site.json` |
-| Menu structure | `src/_data/navigation.json` |
-| Feasts, fasts, and events calendar | `src/_data/feasts.json` |
-| Online giving funds and Stripe links | `src/_data/giving.json` |
-| A regular page (e.g. Our Parish) | `src/who-we-are/our-parish.md` and neighbours |
-| The homepage | `src/index.njk` |
-| News posts | `src/news/*.md` |
-| Colours, fonts, spacing | `src/assets/css/style.css` |
+| What you want to change                            | File                                          |
+| -------------------------------------------------- | --------------------------------------------- |
+| Address, phone, email, service times, social links | `src/_data/site.json`                         |
+| Menu structure                                     | `src/_data/navigation.json`                   |
+| Feasts, fasts, and events calendar                 | `src/_data/feasts.json`                       |
+| Online giving funds and Stripe links               | `src/_data/giving.json`                       |
+| A regular page (e.g. Our Parish)                   | `src/who-we-are/our-parish.md` and neighbours |
+| The homepage                                       | `src/index.njk`                               |
+| News posts                                         | `src/news/*.md`                               |
+| Colours, fonts, spacing                            | `src/assets/css/style.css`                    |
 
 ## Editing a page
 
@@ -34,16 +34,16 @@ Regular paragraphs are just text with a blank line between them.
 - a bullet
 - another bullet
 
-**Bold text**, *italic text*, and [a link](/come-and-see/visiting/).
+**Bold text**, _italic text_, and [a link](/come-and-see/visiting/).
 
 > A quotation, such as a hymn or a passage of scripture.
 ```
 
-The block between the `---` lines is called *front matter*. Keep `title` short: it appears in the
+The block between the `---` lines is called _front matter_. Keep `title` short: it appears in the
 browser tab and in search results.
 
-> **Careful with punctuation in front matter.** If a value starts with a quotation mark, wrap it like
-> this instead:
+> **Careful with punctuation in front matter.** If a value starts with a quotation mark, wrap it
+> like this instead:
 >
 > ```yaml
 > lede: >-
@@ -102,7 +102,8 @@ Paste this into any page, replacing `VIDEO_ID` with the id from the YouTube URL:
     src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
     title="Descriptive title of the video"
     allowfullscreen
-    loading="lazy"></iframe>
+    loading="lazy"
+  ></iframe>
 </div>
 ```
 

@@ -1,0 +1,76 @@
+version: "3"
+
+vars:
+  OUTPUT_DIR: _site
+
+tasks:
+  default:
+    desc: List the available tasks.
+    cmds:
+      - task --list
+    silent: true
+
+  install:
+    desc: Install dependencies for local development.
+    preconditions:
+      - sh: command -v npm
+        msg: npm is required. Install Node.js 22.6 or newer from https://nodejs.org.
+    status:
+      - test node_modules/.package-lock.json -nt package-lock.json
+    cmds:
+      - npm install
+
+  install:ci:
+    desc: Install dependencies from the lockfile, for CI.
+    preconditions:
+      - sh: command -v npm
+        msg: npm is required. Install Node.js 22.6 or newer from https://nodejs.org.
+    cmds:
+      - npm ci
+
+  serve:
+    desc: Serve the site locally at http://localhost:8080 with live reload.
+    deps: [install]
+    cmds:
+      - npm start
+
+  build:
+    desc: Build the static site into ./{{.OUTPUT_DIR}}.
+    deps: [install]
+    cmds:
+      - npm run build
+
+  lint:
+    desc: Run all checks — formatting and TypeScript types.
+    cmds:
+      - task: lint:format
+      - task: lint:types
+
+  lint:format:
+    desc: Check that files match the Prettier formatting rules.
+    deps: [install]
+    cmds:
+      - npm run format:check
+
+  lint:types:
+    desc: Type-check the Eleventy configuration.
+    deps: [install]
+    cmds:
+      - npm run typecheck
+
+  format:
+    desc: Rewrite files to match the Prettier formatting rules.
+    deps: [install]
+    cmds:
+      - npm run format
+
+  check:
+    desc: Run the full quality gate — lint, then build.
+    cmds:
+      - task: lint
+      - task: build
+
+  clean:
+    desc: Remove the build output.
+    cmds:
+      - npm run clean

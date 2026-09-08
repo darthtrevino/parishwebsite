@@ -1,7 +1,9 @@
 ---
 title: Lending Library
-lede: More than 700 titles, including rare and out-of-print books, free to borrow from our parish hall.
-description: The lending library at Saint Elizabeth Orthodox Church, catalogued online at LibraryThing.
+lede:
+  More than 700 titles, including rare and out-of-print books, free to borrow from our parish hall.
+description:
+  The lending library at Saint Elizabeth Orthodox Church, catalogued online at LibraryThing.
 ---
 
 In addition to our [bookstore](/resources/bookstore/), our parish maintains a large lending library

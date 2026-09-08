@@ -2,7 +2,8 @@
 title: Charity
 lede: >-
   "Works of mercy, patience, and love" — the pattern our patron saint set for us.
-description: The charitable work of Saint Elizabeth Orthodox Church in Poulsbo and the Kitsap Peninsula.
+description:
+  The charitable work of Saint Elizabeth Orthodox Church in Poulsbo and the Kitsap Peninsula.
 ---
 
 Our patron, [Holy New Martyr Elizabeth](/who-we-are/our-saint/), gave away the wealth of a princess
@@ -17,8 +18,7 @@ need on the Kitsap Peninsula, administered by the rector.
 If you or someone you know is in need, please contact Father John at
 [{{ site.phone }}](tel:{{ site.phoneHref }}) or [{{ site.email }}](mailto:{{ site.email }}).
 
-If you would like to support this work, you can
-[give to the parish charity fund](/giving/).
+If you would like to support this work, you can [give to the parish charity fund](/giving/).
 
 <div class="notice">
   <strong>Editor's note:</strong> this page is a starting point drawn from parish news archives. Please

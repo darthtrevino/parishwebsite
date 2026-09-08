@@ -1,0 +1,6 @@
+node_modules/
+_site/
+package-lock.json
+
+# Nunjucks templates are not valid HTML on their own; Prettier mangles the tags.
+*.njk

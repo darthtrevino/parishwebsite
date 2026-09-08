@@ -1,22 +1,24 @@
 ---
 title: Our Clergy
-lede: Our parish is served by clergy appointed by our bishop, in a line of succession stretching back twenty centuries to the Holy Apostles.
+lede:
+  Our parish is served by clergy appointed by our bishop, in a line of succession stretching back
+  twenty centuries to the Holy Apostles.
 description: The clergy of Saint Elizabeth Orthodox Church in Poulsbo, Washington.
 ---
 
-Saint Elizabeth Church is under the local administration of **{{ site.jurisdiction.bishop }}** of the
-{{ site.jurisdiction.diocese }} within the [Orthodox Church in America]({{ site.jurisdiction.url }}),
-who descends from the line of bishops (or "overseers" in the New Testament) that stretches back
-twenty centuries to the Holy Apostles themselves. **{{ site.rector }}**&mdash;"Father John"&mdash;is
-the appointed rector of the parish.
+Saint Elizabeth Church is under the local administration of **{{ site.jurisdiction.bishop }}** of
+the {{ site.jurisdiction.diocese }} within the [Orthodox Church in
+America]({{ site.jurisdiction.url }}), who descends from the line of bishops (or "overseers" in the
+New Testament) that stretches back twenty centuries to the Holy Apostles themselves.
+**{{ site.rector }}**&mdash;"Father John"&mdash;is the appointed rector of the parish.
 
 ## Archpriest John Strickland, Rector
 
 Father John grew up in Orange County, California, of Episcopalian background. Falling in love with
 Russian history while an undergraduate, he embarked on a career of historical study that resulted in
 earning a Ph.D. and teaching at several colleges. While living in Saint Petersburg, Russia, for his
-dissertation research on church history, he began attending a local Orthodox parish and with time was
-received into the Orthodox Church there. While in Petersburg he also met his future wife Yelena.
+dissertation research on church history, he began attending a local Orthodox parish and with time
+was received into the Orthodox Church there. While in Petersburg he also met his future wife Yelena.
 Together they now have five children.
 
 Father John is available at all times to speak with those who have questions about the parish or the

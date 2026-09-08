@@ -5,7 +5,11 @@
     { "date": "2026-01-06", "title": "Theophany", "kind": "feast" },
     { "date": "2026-01-25", "title": "Zacchaeus Sunday", "kind": "observance" },
     { "date": "2026-02-02", "title": "Meeting of the Lord in the Temple", "kind": "feast" },
-    { "date": "2026-02-15", "title": "Sunday of the Last Judgment (Meatfare)", "kind": "observance" },
+    {
+      "date": "2026-02-15",
+      "title": "Sunday of the Last Judgment (Meatfare)",
+      "kind": "observance"
+    },
     { "date": "2026-02-22", "title": "Forgiveness Sunday (Cheesefare)", "kind": "observance" },
     { "date": "2026-02-23", "title": "Beginning of Great Lent", "kind": "fast" },
     { "date": "2026-03-25", "title": "Annunciation", "kind": "feast" },
@@ -22,7 +26,11 @@
     { "date": "2026-09-14", "title": "Elevation of the Cross", "kind": "feast" },
     { "date": "2026-11-15", "title": "Nativity Fast begins (through December 24)", "kind": "fast" },
     { "date": "2026-11-21", "title": "Entrance of the Theotokos", "kind": "feast" },
-    { "date": "2026-11-26", "title": "Moleben of Thanksgiving (Thanksgiving Day)", "kind": "observance" },
+    {
+      "date": "2026-11-26",
+      "title": "Moleben of Thanksgiving (Thanksgiving Day)",
+      "kind": "observance"
+    },
     { "date": "2026-12-25", "title": "Nativity of the Lord", "kind": "feast" }
   ]
 }

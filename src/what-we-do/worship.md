@@ -1,7 +1,11 @@
 ---
 title: Worship
-lede: Orthodoxy simply and literally means "true worship." In a real sense, worship is the central activity of the Christian life.
-description: Service times and the meaning of Orthodox worship at Saint Elizabeth Church in Poulsbo, Washington.
+lede:
+  Orthodoxy simply and literally means "true worship." In a real sense, worship is the central
+  activity of the Christian life.
+description:
+  Service times and the meaning of Orthodox worship at Saint Elizabeth Church in Poulsbo,
+  Washington.
 ---
 
 Unlike many religions, Orthodoxy is a total way of life, involving everything we do as human beings,
@@ -11,11 +15,11 @@ adoration and glorification of the Holy Trinity, our worship.
 When done truly&mdash;with due solemnity and within the holy traditions of the Church&mdash;Orthodox
 worship is the experience of the kingdom of heaven on earth. It is the uniting of earth to heaven.
 
-This is why Orthodox Christians show such reverence to the place of worship&mdash;the temple&mdash;and
-one's decorum and bearing within it. We bow. We venerate icons. We cross ourselves frequently. And at
-the divine services we stand in the presence of God, though visitors and those with a need to do so
-are welcome to sit when they desire. At the same time, Orthodox worship is dynamic and active;
-children tend to do remarkably well with it.
+This is why Orthodox Christians show such reverence to the place of worship&mdash;the
+temple&mdash;and one's decorum and bearing within it. We bow. We venerate icons. We cross ourselves
+frequently. And at the divine services we stand in the presence of God, though visitors and those
+with a need to do so are welcome to sit when they desire. At the same time, Orthodox worship is
+dynamic and active; children tend to do remarkably well with it.
 
 In Orthodox worship the presence of God is experienced immediately. This is why when asking an
 Orthodox Christian what worship is like the answer will often simply be, "Come and see" (John
@@ -37,10 +41,10 @@ In addition, we offer Daily Vespers on Wednesday evenings, to give parishioners 
 opportunity to find comfort and strength in God at the midpoint of the workweek.
 
 We also celebrate all of the traditional Christian annual holidays such as Christmas, Theophany, and
-Pascha&mdash;the "feast of feasts" celebrating our Lord, God and Savior's triumphal resurrection from
-the dead and His defeat of death itself. For most of these holidays, we serve the Divine Liturgy on
-the morning of the holiday and a Festal Vigil the evening before. For Pascha, we literally celebrate
-all night.
+Pascha&mdash;the "feast of feasts" celebrating our Lord, God and Savior's triumphal resurrection
+from the dead and His defeat of death itself. For most of these holidays, we serve the Divine
+Liturgy on the morning of the holiday and a Festal Vigil the evening before. For Pascha, we
+literally celebrate all night.
 
 ## Regular service schedule
 

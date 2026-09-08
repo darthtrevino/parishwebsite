@@ -1,7 +1,10 @@
 ---
 title: Our Saint
-lede: Holy New Martyr Elizabeth of Russia (1864–1918), a German princess who gave away her wealth, forgave her husband's murderer, and died singing.
-description: The life of Holy New Martyr Grand Duchess Elizabeth of Russia, patron saint of our parish.
+lede:
+  Holy New Martyr Elizabeth of Russia (1864–1918), a German princess who gave away her wealth,
+  forgave her husband's murderer, and died singing.
+description:
+  The life of Holy New Martyr Grand Duchess Elizabeth of Russia, patron saint of our parish.
 ---
 
 Holy New Martyr Elizabeth of Russia was a German princess raised in the Protestant faith but who
@@ -28,16 +31,17 @@ reported hearing an Orthodox hymn about the cross of Christ ("O Lord Save Thy Pe
 the darkness below.
 
 Saint Elizabeth was canonized by the Moscow Patriarchate of the Orthodox Church in 1992, following
-the collapse of Communism in Russia. Her story is remembered by many Christians throughout the world.
-In 1998 the Church of England placed a statue of her above the western entrance to Westminster Abbey
-in London, and her icon is widely venerated by other non-Orthodox communities to this day.
+the collapse of Communism in Russia. Her story is remembered by many Christians throughout the
+world. In 1998 the Church of England placed a statue of her above the western entrance to
+Westminster Abbey in London, and her icon is widely venerated by other non-Orthodox communities to
+this day.
 
 We celebrate her feast day each year on **July 18**.
 
 ## Troparion to Saint Elizabeth
 
 > O God-wise Elizabeth, with humility thou didst hide thy nobility and honor Christ, especially by
-> imitating the labors of Martha and Mary. As a sacrifice to God, thou didst arm thyself with works of
-> mercy, patience, and love. Seeing thy life of good works and suffering, we sincerely beseech thee,
-> our true teacher: O Venerable Martyr, Grand Duchess Elizabeth, entreat Christ our God to enlighten
-> and save our souls!
+> imitating the labors of Martha and Mary. As a sacrifice to God, thou didst arm thyself with works
+> of mercy, patience, and love. Seeing thy life of good works and suffering, we sincerely beseech
+> thee, our true teacher: O Venerable Martyr, Grand Duchess Elizabeth, entreat Christ our God to
+> enlighten and save our souls!

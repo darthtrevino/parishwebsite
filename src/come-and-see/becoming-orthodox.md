@@ -1,7 +1,11 @@
 ---
 title: Becoming Orthodox
-lede: We believe every human being has been called to membership in the body of Christ, the Orthodox Church.
-description: The path from inquirer to catechumen to sacramental reception into the Orthodox Church at Saint Elizabeth in Poulsbo.
+lede:
+  We believe every human being has been called to membership in the body of Christ, the Orthodox
+  Church.
+description:
+  The path from inquirer to catechumen to sacramental reception into the Orthodox Church at Saint
+  Elizabeth in Poulsbo.
 ---
 
 We believe that every human being is made in the image of God and possesses the same human nature
@@ -32,6 +36,6 @@ journey into Orthodoxy ends, and their journey into the Kingdom of Heaven begins
 
 ## Taking the first step
 
-There is no obligation and no timetable. If you would like to begin, simply come to a Divine Liturgy,
-or contact Father John at [{{ site.phone }}](tel:{{ site.phoneHref }}) or
+There is no obligation and no timetable. If you would like to begin, simply come to a Divine
+Liturgy, or contact Father John at [{{ site.phone }}](tel:{{ site.phoneHref }}) or
 [{{ site.email }}](mailto:{{ site.email }}).

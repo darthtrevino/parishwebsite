@@ -9,17 +9,23 @@ framework, no database, and no monthly hosting bill.
 ## Quick start
 
 ```bash
-npm install
-npm start        # http://localhost:8080, reloads as you edit
+task install
+task serve      # http://localhost:8080, reloads as you edit
 ```
 
-Other commands:
+Other tasks:
 
 ```bash
-npm run build      # build to ./_site
-npm run typecheck  # type-check the Eleventy config
-npm run clean      # remove ./_site
+task            # list every task
+task lint       # formatting + TypeScript checks
+task build      # build to ./_site
+task format     # rewrite files to match the formatting rules
+task check      # lint, then build (the full gate CI runs)
+task clean      # remove ./_site
 ```
+
+These wrap npm scripts, so `npm start`, `npm run build`, `npm run lint`, and friends work too if you
+would rather not install [go-task](https://taskfile.dev).
 
 Requires Node.js 22.6 or newer.
 
@@ -53,7 +59,7 @@ under `src/_data/` so it can be edited without touching templates.
 
 ## Conventions
 
-- All logic is TypeScript. `npm run typecheck` must pass.
+- All logic is TypeScript. `task lint` must pass.
 - **No secrets in this repository.** Online giving uses Stripe Payment Links, which are public URLs.
   A Stripe secret key must never be committed; see `docs/giving-setup.md`.
 - Old Squarespace URLs are preserved as 301 redirects in `src/static/_redirects`. Add an entry there

@@ -12,8 +12,8 @@ Netlify reads `netlify.toml` in this repository, so there is almost nothing to c
    `netlify.toml`. Accept and deploy.
 4. Every push to `main` redeploys. Every pull request gets its own preview URL.
 
-Redirects from the old Squarespace URLs are handled by `src/static/_redirects`, which Eleventy copies
-to the root of the build output.
+Redirects from the old Squarespace URLs are handled by `src/static/_redirects`, which Eleventy
+copies to the root of the build output.
 
 ## Option B — Cloudflare Pages
 
@@ -35,15 +35,17 @@ Do these in order, and do not cancel Squarespace until step 6 has been verified.
    `src/static/_redirects`.
 3. **Lower the DNS TTL.** In whichever service manages `stelizabethorthodox.org` DNS, set the TTL on
    the existing records to 300 seconds and wait a day. This makes the cutover fast and reversible.
-4. **Unlock and transfer the domain if needed.** If the domain is registered *through* Squarespace,
+4. **Unlock and transfer the domain if needed.** If the domain is registered _through_ Squarespace,
    transfer it to a standalone registrar (Cloudflare Registrar and Porkbun are both at-cost) before
    cancelling the subscription, or you risk losing it. Transfers take 5–7 days — start early.
 5. **Point DNS at the new host.** Add the CNAME/A records the host gives you, and add the custom
    domain in the host's dashboard so it issues a TLS certificate.
 6. **Verify.** Confirm `https://stelizabethorthodox.org` and `https://www.stelizabethorthodox.org`
-   both load the new site over HTTPS, that the certificate is valid, and that the old paths redirect.
-7. **Submit the sitemap.** Add the site to [Google Search Console](https://search.google.com/search-console)
-   and submit `https://stelizabethorthodox.org/sitemap.xml`.
+   both load the new site over HTTPS, that the certificate is valid, and that the old paths
+   redirect.
+7. **Submit the sitemap.** Add the site to
+   [Google Search Console](https://search.google.com/search-console) and submit
+   `https://stelizabethorthodox.org/sitemap.xml`.
 8. **Cancel Squarespace** once everything above is confirmed, and only after exporting anything not
    yet migrated (images, audio recordings, past newsletters, the news archive).
 
@@ -60,9 +62,9 @@ Before cancelling, download from the old site:
 
 ## Estimated running costs
 
-| Item | Squarespace today | This site |
-| --- | --- | --- |
-| Hosting | ~$276–$420/year | $0 (Netlify or Cloudflare Pages free tier) |
-| Domain | included or ~$20/year | ~$10–$20/year at an at-cost registrar |
-| Payment processing | Stripe fee + Squarespace commerce fee | Stripe fee only |
-| Email newsletter | Squarespace Campaigns add-on | Buttondown or Mailchimp free tier |
+| Item               | Squarespace today                     | This site                                  |
+| ------------------ | ------------------------------------- | ------------------------------------------ |
+| Hosting            | ~$276–$420/year                       | $0 (Netlify or Cloudflare Pages free tier) |
+| Domain             | included or ~$20/year                 | ~$10–$20/year at an at-cost registrar      |
+| Payment processing | Stripe fee + Squarespace commerce fee | Stripe fee only                            |
+| Email newsletter   | Squarespace Campaigns add-on          | Buttondown or Mailchimp free tier          |
