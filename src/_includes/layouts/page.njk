@@ -1,0 +1,32 @@
+---
+layout: layouts/base.njk
+---
+<article class="page">
+  <header class="page-header">
+    <div class="wrap">
+      {% if eyebrow %}<p class="eyebrow">{{ eyebrow }}</p>{% endif %}
+      <h1>{{ title }}</h1>
+      {% if lede %}<p class="lede">{{ lede }}</p>{% endif %}
+    </div>
+  </header>
+
+  {% set section = null %}
+  {% for group in navigation %}
+    {% if group.children and page.url.startsWith(group.url) %}{% set section = group %}{% endif %}
+  {% endfor %}
+  {% if section %}
+    <nav class="subnav" aria-label="{{ section.title }}">
+      <div class="wrap">
+        <ul>
+          {% for child in section.children %}
+            <li>
+              <a href="{{ child.url }}" {% if page.url == child.url %}aria-current="page"{% endif %}>{{ child.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </nav>
+  {% endif %}
+
+  <div class="wrap prose">{{ content | safe }}</div>
+</article>

@@ -1,0 +1,22 @@
+---
+title: Dates & Events
+lede: Feasts, fasts, and parish observances for the church year ahead.
+description: Calendar of Orthodox feasts, fasts, and parish events at Saint Elizabeth Orthodox Church in Poulsbo.
+---
+
+<p>Our <a href="/what-we-do/worship/">regular weekly schedule</a> changes during certain seasons of the church year. Below are the fixed and movable observances for {{ feasts.year }}.</p>
+
+<ul class="calendar">
+  {% for item in feasts.dates %}
+    <li>
+      <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
+      <span>{{ item.title }}</span>
+      <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
+    </li>
+  {% endfor %}
+</ul>
+
+<p class="notice">
+  Dates are maintained in <code>src/_data/feasts.json</code>. Movable feasts follow the date of Pascha
+  and must be updated each year.
+</p>

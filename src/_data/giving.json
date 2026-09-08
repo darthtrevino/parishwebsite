@@ -1,0 +1,44 @@
+{
+  "provider": "stripe",
+  "configured": false,
+  "note": "Replace each `url` below with a Stripe Payment Link from the parish Stripe dashboard, then set `configured` to true. Payment Links are public URLs — never place a Stripe secret key (sk_live_… / sk_test_…) in this repository.",
+  "publishableKey": "",
+  "funds": [
+    {
+      "id": "tithe",
+      "title": "Tithes & Offerings",
+      "description": "Regular giving that sustains the daily life of the parish: our clergy, our worship, our utilities, and our ministries.",
+      "recurring": true,
+      "url": "",
+      "suggestedAmounts": [50, 100, 250, 500]
+    },
+    {
+      "id": "building",
+      "title": "Building & Beautification",
+      "description": "Renovation of the temple, iconography, and care for our two-acre property north of Poulsbo.",
+      "recurring": false,
+      "url": "",
+      "suggestedAmounts": [100, 250, 1000]
+    },
+    {
+      "id": "charity",
+      "title": "Charity Fund",
+      "description": "Direct assistance to neighbors in need on the Kitsap Peninsula, administered by the rector.",
+      "recurring": false,
+      "url": "",
+      "suggestedAmounts": [25, 50, 100]
+    },
+    {
+      "id": "candles",
+      "title": "Candles & Commemorations",
+      "description": "Offerings for candles, prosphora, and the commemoration of the living and the departed.",
+      "recurring": false,
+      "url": "",
+      "suggestedAmounts": [10, 20, 40]
+    }
+  ],
+  "mail": {
+    "enabled": true,
+    "payee": "Saint Elizabeth Orthodox Church"
+  }
+}

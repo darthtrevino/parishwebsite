@@ -1,0 +1,31 @@
+---
+layout: layouts/base.njk
+eleventyComputed:
+  title: "{{ section.title }}"
+pagination:
+  data: sections
+  size: 1
+  alias: section
+permalink: "{{ section.url }}"
+eleventyExcludeFromCollections: true
+---
+
+<article class="page">
+  <header class="page-header">
+    <div class="wrap">
+      <p class="eyebrow">Saint Elizabeth Orthodox Church</p>
+      <h1>{{ section.title }}</h1>
+    </div>
+  </header>
+
+  <div class="wrap" style="padding: 3rem 0 4rem;">
+    <div class="grid">
+      {% for child in section.children %}
+        <a class="card" href="{{ child.url }}" style="text-decoration: none;">
+          <h3>{{ child.title }}</h3>
+          <p class="card-link">Read more &rarr;</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,21 @@
+# Squarespace URLs preserved so existing links and search results keep working.
+
+/home                    /                                   301
+/our-parish              /who-we-are/our-parish/             301
+/what-is-orthodoxy       /who-we-are/our-faith/              301
+/our-saint               /who-we-are/our-saint/              301
+/our-history             /who-we-are/our-stories/            301
+/our-clergy              /who-we-are/our-clergy/             301
+/our-location            /who-we-are/our-location/           301
+/worship-1               /what-we-do/worship/                301
+/visit                   /come-and-see/visiting/             301
+/what-to-expect          /come-and-see/learning/             301
+/catechesis              /come-and-see/becoming-orthodox/    301
+/bookstore               /resources/bookstore/               301
+/lending-library         /resources/lending-library/         301
+/liturgical-chant        /resources/liturgical-chant/        301
+/online-services         /resources/streaming/               301
+/upcoming-dates          /resources/dates-and-events/        301
+/store                   /giving/                            301
+/media                   /resources/streaming/               301
+/news/:year/:month/:day/:slug   /news/:slug/                 301

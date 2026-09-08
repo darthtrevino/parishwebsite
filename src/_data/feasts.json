@@ -1,0 +1,28 @@
+{
+  "year": 2026,
+  "note": "Great feasts, fasts, and parish observances. Update annually; movable feasts follow the date of Pascha.",
+  "dates": [
+    { "date": "2026-01-06", "title": "Theophany", "kind": "feast" },
+    { "date": "2026-01-25", "title": "Zacchaeus Sunday", "kind": "observance" },
+    { "date": "2026-02-02", "title": "Meeting of the Lord in the Temple", "kind": "feast" },
+    { "date": "2026-02-15", "title": "Sunday of the Last Judgment (Meatfare)", "kind": "observance" },
+    { "date": "2026-02-22", "title": "Forgiveness Sunday (Cheesefare)", "kind": "observance" },
+    { "date": "2026-02-23", "title": "Beginning of Great Lent", "kind": "fast" },
+    { "date": "2026-03-25", "title": "Annunciation", "kind": "feast" },
+    { "date": "2026-04-05", "title": "Palm Sunday", "kind": "feast" },
+    { "date": "2026-04-12", "title": "Pascha", "kind": "pascha" },
+    { "date": "2026-05-21", "title": "Ascension", "kind": "feast" },
+    { "date": "2026-05-31", "title": "Pentecost", "kind": "feast" },
+    { "date": "2026-06-08", "title": "Apostles' Fast begins (21 days)", "kind": "fast" },
+    { "date": "2026-07-18", "title": "Saint Elizabeth Feast Day", "kind": "patronal" },
+    { "date": "2026-08-01", "title": "Dormition Fast (August 1–14)", "kind": "fast" },
+    { "date": "2026-08-06", "title": "Transfiguration", "kind": "feast" },
+    { "date": "2026-09-01", "title": "Church New Year (Holy Indiction)", "kind": "observance" },
+    { "date": "2026-09-08", "title": "Nativity of the Theotokos", "kind": "feast" },
+    { "date": "2026-09-14", "title": "Elevation of the Cross", "kind": "feast" },
+    { "date": "2026-11-15", "title": "Nativity Fast begins (through December 24)", "kind": "fast" },
+    { "date": "2026-11-21", "title": "Entrance of the Theotokos", "kind": "feast" },
+    { "date": "2026-11-26", "title": "Moleben of Thanksgiving (Thanksgiving Day)", "kind": "observance" },
+    { "date": "2026-12-25", "title": "Nativity of the Lord", "kind": "feast" }
+  ]
+}

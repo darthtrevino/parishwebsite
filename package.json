@@ -1,0 +1,28 @@
+{
+  "name": "stelizabeth-website",
+  "version": "1.0.0",
+  "description": "Website for Saint Elizabeth Orthodox Church, Poulsbo, Washington.",
+  "scripts": {
+    "start": "eleventy --config=eleventy.config.ts --serve --quiet",
+    "build": "eleventy --config=eleventy.config.ts",
+    "clean": "rm -rf _site",
+    "typecheck": "tsc --noEmit"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6",
+    "@11ty/eleventy-img": "^7.0.0",
+    "@11ty/eleventy-plugin-rss": "^3.0.0",
+    "@types/luxon": "^3.7.5",
+    "@types/node": "^26.4.0",
+    "luxon": "^3.7.2",
+    "markdown-it": "^15.0.1",
+    "markdown-it-anchor": "^9.2.1",
+    "typescript": "^7.0.2"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.6"
+  }
+}

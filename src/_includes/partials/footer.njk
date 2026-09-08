@@ -1,0 +1,43 @@
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <section>
+      <h2>Saint Elizabeth Orthodox Church</h2>
+      <p class="footer-address">
+        {{ site.address.street }}<br />
+        {{ site.address.city }}, {{ site.address.region }} {{ site.address.postalCode }}
+      </p>
+      <p>
+        <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a><br />
+        <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+      </p>
+      <p><a class="text-link" href="{{ site.address.mapsUrl }}" rel="noopener">Get directions</a></p>
+    </section>
+
+    <section>
+      <h2>Services</h2>
+      <ul class="plain">
+        {% for service in site.services %}
+          <li><strong>{{ service.day }}</strong> &middot; {{ service.name }}, {{ service.time }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section>
+      <h2>Connect</h2>
+      <ul class="plain">
+        <li><a href="{{ site.social.youtube }}" rel="noopener">YouTube</a></li>
+        <li><a href="{{ site.social.facebook }}" rel="noopener">Facebook</a></li>
+        <li><a href="/news/feed.xml">News feed</a></li>
+        <li><a href="/giving/">Give online</a></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class="wrap footer-base">
+    <p>
+      A parish of the <a href="{{ site.jurisdiction.url }}" rel="noopener">{{ site.jurisdiction.name }}</a>,
+      {{ site.jurisdiction.diocese }}.
+    </p>
+    <p>&copy; {% year %} {{ site.title }}</p>
+  </div>
+</footer>

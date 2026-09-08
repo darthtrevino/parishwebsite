@@ -1,0 +1,35 @@
+---
+layout: layouts/base.njk
+title: News
+description: Parish news, announcements, and reflections from Saint Elizabeth Orthodox Church in Poulsbo, Washington.
+permalink: /news/
+eleventyExcludeFromCollections: true
+---
+
+<article class="page">
+  <header class="page-header">
+    <div class="wrap">
+      <p class="eyebrow">Parish</p>
+      <h1>News</h1>
+      <p class="lede">Announcements, reflections, and reports from the life of our parish.</p>
+    </div>
+  </header>
+
+  <div class="wrap prose">
+    {% if collections.news.length %}
+      <ul class="news-list">
+        {% for post in collections.news %}
+          <li>
+            <time datetime="{{ post.date | isoDate }}">{{ post.date | readableDate }}</time>
+            <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+            {% if post.data.description %}<p>{{ post.data.description }}</p>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No news has been posted yet.</p>
+    {% endif %}
+
+    <p class="back-link"><a href="/news/feed.xml">Subscribe via Atom feed</a></p>
+  </div>
+</article>

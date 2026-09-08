@@ -1,0 +1,45 @@
+[
+  {
+    "title": "Who We Are",
+    "url": "/who-we-are/",
+    "children": [
+      { "title": "Our Faith", "url": "/who-we-are/our-faith/" },
+      { "title": "Our Parish", "url": "/who-we-are/our-parish/" },
+      { "title": "Our Saint", "url": "/who-we-are/our-saint/" },
+      { "title": "Our Stories", "url": "/who-we-are/our-stories/" },
+      { "title": "Our Clergy", "url": "/who-we-are/our-clergy/" },
+      { "title": "Our Location", "url": "/who-we-are/our-location/" }
+    ]
+  },
+  {
+    "title": "What We Do",
+    "url": "/what-we-do/",
+    "children": [
+      { "title": "Worship", "url": "/what-we-do/worship/" },
+      { "title": "Charity", "url": "/what-we-do/charity/" },
+      { "title": "Evangelization", "url": "/what-we-do/evangelization/" }
+    ]
+  },
+  {
+    "title": "Come and See",
+    "url": "/come-and-see/",
+    "children": [
+      { "title": "Visiting", "url": "/come-and-see/visiting/" },
+      { "title": "Learning", "url": "/come-and-see/learning/" },
+      { "title": "Becoming Orthodox", "url": "/come-and-see/becoming-orthodox/" }
+    ]
+  },
+  {
+    "title": "Resources",
+    "url": "/resources/",
+    "children": [
+      { "title": "Bookstore", "url": "/resources/bookstore/" },
+      { "title": "Lending Library", "url": "/resources/lending-library/" },
+      { "title": "Liturgical Chant", "url": "/resources/liturgical-chant/" },
+      { "title": "Online Streaming", "url": "/resources/streaming/" },
+      { "title": "Dates & Events", "url": "/resources/dates-and-events/" }
+    ]
+  },
+  { "title": "News", "url": "/news/" },
+  { "title": "Giving", "url": "/giving/", "highlight": true }
+]

@@ -1,0 +1,139 @@
+---
+layout: layouts/base.njk
+title: Welcome
+description: A vibrant Orthodox Christian parish on the Kitsap Peninsula in Washington, just north of Poulsbo.
+permalink: /
+---
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Orthodox Church in America &middot; Poulsbo, Washington</p>
+    <h1>Come and see.</h1>
+    <p class="lede">
+      We are a vibrant Orthodox Christian parish on the Kitsap Peninsula, just north of Poulsbo,
+      keeping the faith of the Apostles in worship, charity, and fellowship.
+    </p>
+    <div class="hero-actions">
+      <a class="button" href="/come-and-see/visiting/">Plan your visit</a>
+      <a class="button ghost" href="/what-we-do/worship/">Service times</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title">Join Us in Worship</h2>
+    {% include "partials/service-times.njk" %}
+    <p style="text-align: center; margin-top: 2rem;">
+      This schedule changes during certain seasons of the church year.
+      See our <a href="/resources/dates-and-events/">calendar of feasts and fasts</a>.
+    </p>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <h2 class="section-title">A Word of Welcome</h2>
+    <div class="prose" style="margin-inline: auto; padding-bottom: 0;">
+      <p>
+        We are delighted that you found our website. We hope you enjoy reading through it and sampling
+        some of our homilies, talks, and music.
+      </p>
+      <p>
+        If you have questions about our parish&mdash;or would like to speak to a priest&mdash;our rector
+        {{ site.rector }} is available at all times to do so. You can reach him at
+        <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a> or
+        <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title">Where to Begin</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>New to Orthodoxy?</h3>
+        <p>
+          Orthodox Christianity is the faith of the Apostles, handed down in an unbroken tradition from
+          the first century to the present.
+        </p>
+        <p><a class="card-link" href="/who-we-are/our-faith/">Our Faith &rarr;</a></p>
+      </div>
+      <div class="card">
+        <h3>Visiting for the first time</h3>
+        <p>
+          What to expect when you arrive, how our services unfold, and the coffee hour and pot-luck that
+          follow every Sunday Liturgy.
+        </p>
+        <p><a class="card-link" href="/come-and-see/visiting/">Visiting &rarr;</a></p>
+      </div>
+      <div class="card">
+        <h3>Becoming Orthodox</h3>
+        <p>
+          From inquirer to catechumen to sacramental reception&mdash;the path many of our parishioners
+          have already walked.
+        </p>
+        <p><a class="card-link" href="/come-and-see/becoming-orthodox/">Becoming Orthodox &rarr;</a></p>
+      </div>
+      <div class="card">
+        <h3>Can't be here in person?</h3>
+        <p>
+          Each Sunday we stream the Divine Liturgy live on YouTube for members, guests, and those who are
+          homebound.
+        </p>
+        <p><a class="card-link" href="/resources/streaming/">Watch online &rarr;</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% set upcoming = feasts.dates | limit(6) %}
+<section class="section alt">
+  <div class="wrap">
+    <h2 class="section-title">The Church Year Ahead</h2>
+    <ul class="calendar">
+      {% for item in upcoming %}
+        <li>
+          <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
+          <span>{{ item.title }}</span>
+          <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
+        </li>
+      {% endfor %}
+    </ul>
+    <p style="margin-top: 1.5rem;"><a class="text-link" href="/resources/dates-and-events/">Full calendar of feasts and fasts &rarr;</a></p>
+  </div>
+</section>
+
+{% if collections.news.length %}
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title">Parish News</h2>
+    <ul class="news-list">
+      {% for post in collections.news | limit(4) %}
+        <li>
+          <time datetime="{{ post.date | isoDate }}">{{ post.date | readableDate }}</time>
+          <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+          {% if post.data.description %}<p>{{ post.data.description }}</p>{% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    <p style="margin-top: 1.5rem;"><a class="text-link" href="/news/">All news &rarr;</a></p>
+  </div>
+</section>
+{% endif %}
+
+<section class="section alt">
+  <div class="wrap">
+    <h2 class="section-title">Directions</h2>
+    <div class="prose" style="margin-inline: auto;">
+      <p>
+        Saint Elizabeth Orthodox Church is located {{ site.address.directions | replace("Just", "just") }}
+        Our address is <strong>{{ site.address.street }}</strong>, {{ site.address.city }},
+        {{ site.address.region }} {{ site.address.postalCode }}.
+      </p>
+      <p><a class="button" href="{{ site.address.mapsUrl }}" rel="noopener">Open in maps</a></p>
+    </div>
+  </div>
+</section>

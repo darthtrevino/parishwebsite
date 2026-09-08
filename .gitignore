@@ -1,0 +1,10 @@
+node_modules/
+_site/
+.cache/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+.netlify/
+.wrangler/

@@ -1,0 +1,32 @@
+---
+layout: layouts/base.njk
+title: Page Not Found
+permalink: /404.html
+eleventyExcludeFromCollections: true
+---
+
+<article class="page">
+  <header class="page-header">
+    <div class="wrap">
+      <p class="eyebrow">Error 404</p>
+      <h1>We could not find that page</h1>
+      <p class="lede">
+        The page you were looking for may have moved when we rebuilt this website. Please try one of
+        the links below, or contact us and we will help you find it.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap prose">
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/what-we-do/worship/">Service times</a></li>
+      <li><a href="/come-and-see/visiting/">Visiting</a></li>
+      <li><a href="/news/">News</a></li>
+      <li><a href="/giving/">Giving</a></li>
+    </ul>
+    <p>
+      Or call Father John at <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>.
+    </p>
+  </div>
+</article>

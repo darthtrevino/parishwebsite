@@ -1,0 +1,19 @@
+---
+layout: layouts/base.njk
+ogType: article
+---
+<article class="page">
+  <header class="page-header">
+    <div class="wrap">
+      <p class="eyebrow"><a href="/news/">News</a></p>
+      <h1>{{ title }}</h1>
+      <p class="lede">
+        <time datetime="{{ page.date | isoDate }}">{{ page.date | readableDate }}</time>
+      </p>
+    </div>
+  </header>
+  <div class="wrap prose">
+    {{ content | safe }}
+    <p class="back-link"><a href="/news/">&larr; All news</a></p>
+  </div>
+</article>

@@ -1,0 +1,96 @@
+---
+layout: layouts/base.njk
+title: Giving
+description: Support the ministry of Saint Elizabeth Orthodox Church through online tithes, offerings, and gifts.
+permalink: /giving/
+---
+
+<article class="page">
+  <header class="page-header">
+    <div class="wrap">
+      <p class="eyebrow">Stewardship</p>
+      <h1>Giving</h1>
+      <p class="lede">
+        "As a sacrifice to God, thou didst arm thyself with works of mercy, patience, and love."
+        Our patron gave away the wealth of a princess. Our own offerings, however modest, share in that
+        same sacrifice.
+      </p>
+    </div>
+  </header>
+
+  <div class="wrap prose">
+    <p>
+      Giving sustains the daily life of our parish: our clergy, our worship, our building, and our care
+      for neighbors on the Kitsap Peninsula. Gifts may be made online, in the offering plate on Sunday,
+      or by mail.
+    </p>
+
+    {% if not giving.configured %}
+      <div class="notice">
+        <strong>Online giving is not yet live.</strong>
+        The parish administrator needs to create Stripe Payment Links and add them to
+        <code>src/_data/giving.json</code>. See <code>docs/giving-setup.md</code> for step-by-step
+        instructions. Until then, the funds below are shown without payment buttons.
+      </div>
+    {% endif %}
+
+    <div class="grid wide" style="margin: 2.5rem 0;">
+      {% for fund in giving.funds %}
+        <div class="card">
+          <h3>{{ fund.title }}</h3>
+          <p>{{ fund.description }}</p>
+          {% if fund.suggestedAmounts %}
+            <ul class="amounts">
+              {% for amount in fund.suggestedAmounts %}
+                <li>${{ amount }}</li>
+              {% endfor %}
+              <li>Other</li>
+            </ul>
+          {% endif %}
+          {% if giving.configured and fund.url %}
+            <p>
+              <a class="button" href="{{ fund.url }}" rel="noopener">
+                {% if fund.recurring %}Give monthly{% else %}Give now{% endif %}
+              </a>
+            </p>
+          {% else %}
+            <p><span class="button" aria-disabled="true">Coming soon</span></p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+
+    <h2>Other ways to give</h2>
+
+    <h3>In person</h3>
+    <p>
+      Offerings may be placed in the plate at any service, or given directly to the rector or parish
+      treasurer.
+    </p>
+
+    {% if giving.mail.enabled %}
+      <h3>By mail</h3>
+      <p>
+        Checks may be made payable to <strong>{{ giving.mail.payee }}</strong> and mailed to:
+      </p>
+      <p>
+        {{ site.address.street }}<br />
+        {{ site.address.city }}, {{ site.address.region }} {{ site.address.postalCode }}
+      </p>
+    {% endif %}
+
+    <h3>Questions</h3>
+    <p>
+      For questions about stewardship, pledging, planned giving, or year-end contribution statements,
+      please contact Father John at <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a> or
+      <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
+    </p>
+
+    <p class="notice">
+      Saint Elizabeth Orthodox Church is a parish of the
+      <a href="{{ site.jurisdiction.url }}" rel="noopener">{{ site.jurisdiction.name }}</a>. Please
+      confirm the parish's current tax-exempt status and EIN with the treasurer before publishing a
+      deductibility statement here.
+    </p>
+  </div>
+</article>

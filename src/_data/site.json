@@ -1,0 +1,39 @@
+{
+  "title": "Saint Elizabeth Orthodox Church",
+  "shortTitle": "Saint Elizabeth",
+  "tagline": "An Orthodox Christian parish on the Kitsap Peninsula",
+  "description": "Saint Elizabeth Orthodox Church is a parish of the Orthodox Church in America serving Poulsbo and the Kitsap Peninsula in Washington State.",
+  "url": "https://stelizabethorthodox.org",
+  "locale": "en_US",
+  "timezone": "America/Los_Angeles",
+  "email": "rector@stelizabethorthodox.org",
+  "phone": "(360) 536-1334",
+  "phoneHref": "+13605361334",
+  "rector": "Archpriest John Strickland",
+  "jurisdiction": {
+    "name": "Orthodox Church in America",
+    "url": "https://www.oca.org/",
+    "diocese": "Diocese of the West",
+    "bishop": "Bishop Vasily (Permiakov)"
+  },
+  "address": {
+    "street": "26580 Breidablik Place NW",
+    "city": "Poulsbo",
+    "region": "WA",
+    "postalCode": "98370",
+    "country": "US",
+    "mapsUrl": "https://www.google.com/maps/search/?api=1&query=26580+Breidablik+Place+NW+Poulsbo+WA+98370",
+    "directions": "Just off Highway 3 north of Poulsbo at Pioneer Way, next to Breidablik Cemetery."
+  },
+  "services": [
+    { "name": "Divine Liturgy", "day": "Sunday", "time": "10:00 a.m." },
+    { "name": "Daily Vespers", "day": "Wednesday", "time": "6:30 p.m." },
+    { "name": "Great Vespers / Resurrectional Vigil", "day": "Saturday", "time": "6:00 p.m." }
+  ],
+  "social": {
+    "youtube": "https://www.youtube.com/@stelizabethorthodoxpoulsbo",
+    "livestream": "https://www.youtube.com/@stelizabethorthodoxpoulsbo/streams",
+    "facebook": "https://www.facebook.com/stelizabethorthodox.org/",
+    "libraryThing": "https://www.librarything.com/profile/GrandDuchessLiz"
+  }
+}
