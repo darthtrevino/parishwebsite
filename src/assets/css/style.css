@@ -208,10 +208,17 @@ p {
   opacity: 0.85;
 }
 
-.site-nav ul {
+.site-nav > ul {
   display: flex;
   align-items: center;
   gap: 1.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav .submenu {
+  display: block;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -457,9 +464,23 @@ p {
 
 .portrait {
   float: right;
+  clear: both;
   width: min(15rem, 40%);
   margin: 0.4rem 0 1.5rem 2rem;
   border-radius: var(--radius);
+}
+
+/* Keep headings and portraits from colliding when a person has a short bio
+   (or none at all, as with Subdeacon Gregory Hendry on the clergy page). */
+.prose h2,
+.prose h3 {
+  clear: both;
+}
+
+.prose::after {
+  content: "";
+  display: block;
+  clear: both;
 }
 
 @media (width < 40rem) {
@@ -868,7 +889,7 @@ a.card:hover {
 /* -------------------------------------------------------------- responsive */
 
 @media (width < 60rem) {
-  .site-nav ul {
+  .site-nav > ul {
     gap: 1.1rem;
   }
 
@@ -915,7 +936,7 @@ a.card:hover {
     display: block;
   }
 
-  .site-nav ul {
+  .site-nav > ul {
     flex-direction: column;
     align-items: stretch;
     gap: 0;

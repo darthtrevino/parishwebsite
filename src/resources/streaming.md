@@ -1,5 +1,5 @@
 ---
-banner: /assets/img/photos/rector-serving.jpg
+banner: /assets/img/photos/banner-streaming.jpg
 title: Online Streaming
 lede: Each Sunday we stream the Divine Liturgy live on YouTube.
 description:

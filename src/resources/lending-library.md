@@ -1,5 +1,5 @@
 ---
-banner: /assets/img/photos/bookstore.jpg
+banner: /assets/img/photos/banner-lending-library.jpg
 title: Lending Library
 lede:
   More than 700 titles, including rare and out-of-print books, free to borrow from our parish hall.

@@ -1,5 +1,5 @@
 ---
-banner: /assets/img/photos/church-interior.jpg
+banner: /assets/img/photos/banner-liturgical-chant.jpg
 title: Liturgical Chant
 lede: Recordings of the hymns and services sung by our parish choir.
 description:

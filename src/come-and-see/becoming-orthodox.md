@@ -1,5 +1,5 @@
 ---
-banner: /assets/img/photos/icon-communion.jpg
+banner: /assets/img/photos/banner-becoming-orthodox.jpg
 title: Becoming Orthodox
 lede:
   We believe every human being has been called to membership in the body of Christ, the Orthodox
@@ -11,6 +11,11 @@ description:
 
 We believe that every human being is made in the image of God and possesses the same human nature
 assumed by our Lord Jesus Christ in the incarnation.
+
+<figure>
+<img src="/assets/img/photos/catechumen-video.jpg" alt="Title card reading &quot;Becoming an Orthodox Catechumen&quot; over a view of Puget Sound" />
+<figcaption>Becoming an Orthodox Catechumen.</figcaption>
+</figure>
 
 Visitors to this website and to our church will find themselves in different stages of interest in
 Orthodoxy, and we have some who attend our church on a regular basis but have (still) not become

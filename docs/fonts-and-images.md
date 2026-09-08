@@ -44,9 +44,17 @@ kit fails to load.
 
 ## Adding or replacing images
 
-Optimised photographs live in `src/assets/img/photos/`. Keep them under about 2000px wide and
-re-encode before committing — the originals downloaded from Squarespace totalled 24 MB and were
-reduced to under 4 MB with no visible loss:
+Optimised photographs live in `src/assets/img/photos/`. Each page's banner is named
+`banner-<page>.jpg` and was taken from the corresponding page on the old Squarespace site, so the
+imagery matches what parishioners are used to. Inline photographs are named for their subject
+(`rector-john-strickland.jpg`, `martha-mary-convent.jpg`).
+
+When importing more images from the old site, take them from the page they actually appeared on
+rather than guessing from thumbnails — several of the photographs are visually similar and are easy
+to misattribute.
+
+Keep them under about 2000px wide and re-encode before committing — the originals downloaded from
+Squarespace totalled 24 MB and were reduced to under 4 MB with no visible loss:
 
 ```js
 // one-off, using the sharp that ships with @11ty/eleventy-img

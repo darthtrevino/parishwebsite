@@ -1,5 +1,5 @@
 ---
-banner: /assets/img/photos/winter-trees.jpg
+banner: /assets/img/photos/banner-learning.jpg
 title: Learning
 lede:
   According to the Gospel of John, salvation consists of knowing the only true God (John 17:3) — an

@@ -1,5 +1,5 @@
 ---
-banner: /assets/img/photos/clergy-serving.jpg
+banner: /assets/img/photos/chrismation.jpg
 title: Evangelization
 lede: >-
   "Come and see" (John 1:46). The Church grows the way it always has — one person at a time.
