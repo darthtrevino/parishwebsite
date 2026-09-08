@@ -3,7 +3,9 @@
 > **Status: preview only.** The Giving page is built and reachable at `/giving/`, but it is kept out
 > of the main navigation and **takes no payments**. It currently renders an interactive _mock_ of
 > the checkout so the parish council can review the donor experience before committing to a
-> provider. Follow [Publishing the page](#publishing-the-page) to launch it for real.
+> provider. Follow [Publishing the page](#publishing-the-page) to launch it for real — but read
+> [Known gaps](#known-gaps) first, because the monthly tithe flow shown in the mock is not something
+> Stripe Payment Links can do today.
 
 The Giving page is driven entirely by `src/_data/giving.json`, which supports three states:
 
@@ -53,6 +55,93 @@ We use **Stripe Payment Links**. This approach was chosen deliberately:
 > **Never commit a Stripe secret key** (`sk_live_…`, `sk_test_…`, or a restricted key). Payment Link
 > URLs and publishable keys (`pk_…`) are safe to commit; secret keys are not.
 
+## Known gaps
+
+> **Cursory analysis, September 2026.** Verified against vendor documentation, not against a live
+> account. Re-check before the parish commits money or signs up — payment providers change pricing
+> and features frequently.
+
+### Donor-chosen amount + monthly is not supported by Stripe Payment Links
+
+This is the significant one for tithing. Stripe's pay-what-you-want pricing
+([docs](https://docs.stripe.com/payments/checkout/pay-what-you-want)) states plainly that such
+prices **"don't support recurring payments."** The Dashboard enforces it too: you must pick
+_One-off_ before _Customer chooses price_ becomes available.
+
+So a Payment Link can offer an open amount, or a monthly amount, but not both at once. It cannot do
+"give 608 dollars and 33 cents every month," which is exactly what a parishioner tithing a
+proportion of income needs. The mock at `/giving/` currently offers that unsupported combination on
+Tithes & Offerings, so the flow it shows is not yet buildable with Payment Links alone.
+
+Three ways around it, cheapest-to-build first:
+
+1. **Fixed monthly tiers.** Create recurring prices at $50 / $100 / $250 / $500. No code. Poor fit
+   for proportional giving, and awkward to change when income changes.
+2. **Unit price with adjustable quantity.** Create a one-dollar-per-month recurring price and enable
+   _Let customers adjust quantity_. A donor giving 608 dollars a month sets the quantity to 608. No
+   code, arbitrary amounts, one-dollar granularity. Raise the quantity maximum, which defaults
+   to 99. The checkout reads as "608 × $1.00/month", so the page needs a line explaining that.
+3. **Serverless function.** A small endpoint creates a Subscription with an inline price. Full
+   control, but it needs the Stripe **secret** key, which must live in the host's environment
+   variables and never in this repository.
+
+### Smaller gaps
+
+- **Fund designation is by link, not by field.** One Payment Link per fund is what gives us clean
+  per-fund reporting. A donor splitting a gift across funds has to check out twice.
+- **`_redirects` does not work on GitHub Pages.** It is a Netlify feature. The preview deploy has no
+  working legacy Squarespace redirects; that only matters at real cutover.
+- **No donor record in this repo.** Everything — receipts, year-end statements, recurring status —
+  lives in the provider's dashboard. That is deliberate, but it means the treasurer works in two
+  places unless we later add a church-management system.
+
+## Provider comparison: Stripe, Square, and Zelle
+
+Same cursory-analysis caveat as above. Rates are US list prices; all three waive or discount for
+approved non-profits, so the numbers below are worst case.
+
+|                                 | **Stripe**                | **Square**                                                           | **Zelle**                                               |
+| ------------------------------- | ------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------- |
+| Donor picks amount, one-time    | Yes                       | Yes                                                                  | Yes                                                     |
+| **Donor picks amount, monthly** | **No** (see above)        | **Yes** — donation links take a _Frequency_ of one-time or recurring | Donor-scheduled only; parish cannot set up or manage it |
+| Card fee                        | 2.9% + $0.30              | 2.9% + $0.30 online                                                  | n/a                                                     |
+| Bank-transfer fee               | ACH 0.8%, capped at $5.00 | ACH available; rate unverified                                       | **$0**                                                  |
+| In-person giving                | Terminal hardware         | Strong — same account covers the bookstore and candle desk           | Awkward                                                 |
+| Fits our static site            | Hosted link or redirect   | Hosted link or redirect                                              | No integration at all                                   |
+| Per-fund tracking               | One link per fund         | One link per fund                                                    | Memo line, reconciled by hand                           |
+| Automatic receipts              | Yes                       | Yes                                                                  | **No**                                                  |
+| Donor self-service              | Customer Portal, no code  | Yes                                                                  | Bank app                                                |
+| Reversible                      | Chargebacks apply         | Chargebacks apply                                                    | **Irreversible**                                        |
+
+### Reading of the three
+
+**Square** is the strongest single answer on features. It closes the exact gap Stripe has: a
+donation payment link takes a _Frequency_ of one-time **or recurring** while still letting the donor
+enter their own amount
+([Square docs](https://squareup.com/help/us/en/article/7184-set-up-donation-goals-with-square-checkout-links)),
+so proportional monthly tithing works with no code and no workaround. Two caveats: donation links
+are capped at **$5,000** per transaction, which a large building gift could exceed, and Square's
+non-profit rate appears to apply to Invoices rather than to all online donations — confirm both with
+Square before switching. Square is also the better fit if the parish ever wants one system covering
+the bookstore, candle desk, and online giving.
+
+**Stripe** remains the better _engineering_ platform — cleaner APIs, the cheapest ACH by a wide
+margin, and a no-code Customer Portal. That ACH rate matters on a large regular tithe: roughly five
+dollars a month on a 600-dollar gift, against about seventeen on a card. Its weakness is precisely
+the recurring custom amount, and the quantity workaround above is serviceable but slightly odd for
+donors.
+
+**Zelle** is not a competitor to either — it cannot be integrated into a website at all. There is no
+form, no dashboard, no receipt, and no donor record; the parish publishes an email address and the
+donor pushes money from their own banking app. But it is genuinely **free**, and that is worth real
+money on large gifts: a $5,000 building donation costs about $145 in card fees and $0 by Zelle.
+Payments are also irreversible, which removes chargeback risk but equally removes any recourse for a
+donor who makes a mistake.
+
+**Suggested shape:** pick one card/ACH rail for convenience and recurring gifts, and publish Zelle
+alongside it for large one-off gifts where the fee saving is material. That is a page-copy decision,
+not a code decision, and costs nothing to offer both.
+
 ## 1. Create the Stripe account
 
 1. Create a Stripe account at <https://dashboard.stripe.com/register> using a parish email address,
@@ -67,16 +156,22 @@ We use **Stripe Payment Links**. This approach was chosen deliberately:
 
 For each fund in `src/_data/giving.json`, go to **Product catalogue → Payment links → New**:
 
-| Fund                      | Type               | Notes                                                |
-| ------------------------- | ------------------ | ---------------------------------------------------- |
-| Tithes & Offerings        | Recurring, monthly | Also create a one-time link if you want both options |
-| Building & Beautification | One-time           |                                                      |
-| Charity Fund              | One-time           |                                                      |
-| Candles & Commemorations  | One-time           |                                                      |
+| Fund                      | Type                       | Notes                                       |
+| ------------------------- | -------------------------- | ------------------------------------------- |
+| Tithes & Offerings        | One-time **and** recurring | Needs **two** links — see the caution below |
+| Building & Beautification | One-time                   |                                             |
+| Charity Fund              | One-time                   |                                             |
+| Candles & Commemorations  | One-time                   |                                             |
+
+> **Caution — this is the [known gap](#known-gaps).** _Customers choose what to pay_ is only
+> available on **one-off** prices. The recurring tithe link therefore cannot also let the donor name
+> their amount. Build it as either fixed monthly tiers or a $1.00/month price with adjustable
+> quantity, and read the workarounds above before creating it.
 
 Recommended settings for each link:
 
-- **Pricing:** choose _Customers choose what to pay_, and set a preset/suggested amount.
+- **Pricing:** for the one-time links, choose _Customers choose what to pay_ and set a
+  preset/suggested amount. For the recurring link, see the caution above.
 - **After payment:** redirect to `https://stelizabethorthodox.org/giving/?thanks=1`.
 - **Options → Collect customer name and address:** on. This is needed for year-end statements.
 - **Options → Custom field:** add an optional text field labelled _Memo / intention_ so donors can
