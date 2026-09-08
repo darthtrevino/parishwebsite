@@ -32,7 +32,7 @@ permalink: /
         {% include "partials/service-times.njk" %}
         <p class="small">
           This schedule changes during certain seasons of the church year.
-          See our <a href="/resources/dates-and-events/">calendar of feasts and fasts</a>.
+          See our <a href="/resources/dates-and-events/">full parish calendar</a>.
         </p>
       </div>
     </div>
@@ -79,13 +79,12 @@ permalink: /
   </div>
 </section>
 
-{% set upcoming = calendar.events | limit(6) %}
-{% if upcoming.length %}
+{% if calendar.upcoming.length %}
 <section class="section">
   <div class="wrap">
-    <h2 class="section-title">Parish Calendar</h2>
+    <h2 class="section-title">Upcoming Events</h2>
     <ul class="calendar">
-      {% for item in upcoming %}
+      {% for item in calendar.upcoming %}
         <li>
           <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
           <span>
@@ -96,7 +95,7 @@ permalink: /
         </li>
       {% endfor %}
     </ul>
-    <p style="margin-top: 1.5rem;"><a class="text-link" href="/resources/dates-and-events/">Full calendar of feasts and fasts &rarr;</a></p>
+    <p style="margin-top: 1.5rem;"><a class="text-link" href="/resources/dates-and-events/">See the full parish calendar &rarr;</a></p>
   </div>
 </section>
 {% endif %}

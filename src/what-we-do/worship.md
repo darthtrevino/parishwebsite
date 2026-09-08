@@ -52,4 +52,4 @@ literally celebrate all night.
 {% include "partials/service-times.njk" %}
 
 This schedule does change during certain times of the year. You can check our
-[calendar of feasts, fasts, and events](/resources/dates-and-events/) for the year ahead.
+[full parish calendar](/resources/dates-and-events/) for the services, feasts, and gatherings ahead.

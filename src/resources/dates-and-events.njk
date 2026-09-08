@@ -1,11 +1,11 @@
 ---
 banner: /assets/img/photos/banner-dates-and-events.jpg
 title: Dates & Events
-lede: Feasts, fasts, and parish observances for the church year ahead.
-description: Calendar of Orthodox feasts, fasts, and parish events at Saint Elizabeth Orthodox Church in Poulsbo.
+lede: Services, feasts, and parish gatherings for the year ahead.
+description: Calendar of services, feasts, and parish events at Saint Elizabeth Orthodox Church in Poulsbo.
 ---
 
-<p>Our <a href="/what-we-do/worship/">regular weekly schedule</a> changes during certain seasons of the church year. Below are the feasts, fasts, and parish events for the year ahead.</p>
+<p>Everything on the parish calendar for the coming year, month by month. For the pattern of a normal week, see our <a href="/what-we-do/worship/">regular weekly schedule</a>.</p>
 
 {% if not calendar.configured %}
   <div class="notice">
@@ -20,25 +20,47 @@ description: Calendar of Orthodox feasts, fasts, and parish events at Saint Eliz
     Please check back shortly, or call the parish at
     <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>.
   </div>
-{% elif not calendar.events.length %}
+{% elif not calendar.months.length %}
   <p>There are no events on the parish calendar for the coming year yet.</p>
 {% else %}
-  <ul class="calendar">
-    {% for item in calendar.events %}
-      <li>
-        <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
-        <span>
-          {{ item.title }}
-          {% if not item.allDay %}<span class="calendar-meta">{{ item.start | eventTime }}</span>{% endif %}
-          {% if item.location %}<span class="calendar-meta">{{ item.location }}</span>{% endif %}
-        </span>
-        <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
-      </li>
+  {% if calendar.embedUrl %}
+    <div class="calendar-embed">
+      <iframe
+        src="{{ calendar.embedUrl }}"
+        title="Saint Elizabeth Orthodox Church parish calendar"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  {% endif %}
+
+  <nav class="month-jump" aria-label="Jump to a month">
+    {% for month in calendar.months %}
+      <a href="#{{ month.key }}">{{ month.label }}</a>
     {% endfor %}
-  </ul>
+  </nav>
+
+  {% for month in calendar.months %}
+    <section class="calendar-month">
+      <h2 id="{{ month.key }}" class="calendar-month-title">{{ month.label }}</h2>
+      <ul class="calendar">
+        {% for item in month.events %}
+          <li>
+            <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
+            <span>
+              {{ item.title }}
+              {% if not item.allDay %}<span class="calendar-meta">{{ item.start | eventTime }}</span>{% endif %}
+              {% if item.location %}<span class="calendar-meta">{{ item.location }}</span>{% endif %}
+            </span>
+            <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endfor %}
 
   <p class="small">
     Times are {{ site.address.city }} local time. The calendar is maintained in Google Calendar; this
     page updates on the next site build.
   </p>
 {% endif %}
+

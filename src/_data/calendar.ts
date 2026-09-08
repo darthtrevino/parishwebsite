@@ -27,10 +27,23 @@ export interface CalendarEvent {
   kind: EventKind;
 }
 
+export interface CalendarMonth {
+  /** Sort/anchor key, e.g. "2026-09". */
+  key: string;
+  /** Display label, e.g. "September 2026". */
+  label: string;
+  events: CalendarEvent[];
+}
+
 export interface CalendarData {
   configured: boolean;
   error: string | null;
   events: CalendarEvent[];
+  /** Events falling within the next fortnight, for the homepage. */
+  upcoming: CalendarEvent[];
+  months: CalendarMonth[];
+  /** Google's month-grid embed, or null when there is nothing safe to embed. */
+  embedUrl: string | null;
   timezone: string;
   updated: string;
 }
@@ -170,11 +183,62 @@ function expand(ics: string, from: ICAL.Time, to: ICAL.Time): CalendarEvent[] {
   return events.sort((a, b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title));
 }
 
+/** Days of events the homepage's "Upcoming Events" section covers. */
+const UPCOMING_DAYS = 14;
+
+/**
+ * Buckets events into calendar months. The parish calendar is a service
+ * schedule running to several hundred entries a year, so the page needs month
+ * headings to stay navigable.
+ */
+function groupByMonth(events: CalendarEvent[]): CalendarMonth[] {
+  const months = new Map<string, CalendarMonth>();
+  for (const event of events) {
+    const key = event.date.slice(0, 7);
+    let month = months.get(key);
+    if (!month) {
+      month = {
+        key,
+        label: DateTime.fromISO(event.date).toFormat("LLLL yyyy"),
+        events: [],
+      };
+      months.set(key, month);
+    }
+    month.events.push(event);
+  }
+  return [...months.values()];
+}
+
+/**
+ * Google's month-grid embed for the public calendar.
+ *
+ * Returns null when the configured value is a full ICS URL: that form is
+ * Google's private "secret address", and building an embed from it would
+ * publish the credential in the page source.
+ */
+function embedUrl(id: string): string | null {
+  if (!id || /^https?:\/\//i.test(id)) return null;
+  const params = new URLSearchParams({
+    src: id,
+    ctz: site.timezone,
+    mode: "MONTH",
+    showTitle: "0",
+    showPrint: "0",
+    showCalendars: "0",
+    showTz: "0",
+    wkst: "1",
+  });
+  return `https://calendar.google.com/calendar/embed?${params}`;
+}
+
 export default async function calendar(): Promise<CalendarData> {
   const base: CalendarData = {
     configured: false,
     error: null,
     events: [],
+    upcoming: [],
+    months: [],
+    embedUrl: null,
     timezone: site.timezone,
     updated: DateTime.now().setZone(site.timezone).toISO()!,
   };
@@ -204,12 +268,20 @@ export default async function calendar(): Promise<CalendarData> {
       (event) => event.date >= firstDate && event.date <= lastDate,
     );
 
-    return { ...base, configured: true, events };
+    const upcomingEnd = now.plus({ days: UPCOMING_DAYS }).toISODate()!;
+    return {
+      ...base,
+      configured: true,
+      events,
+      upcoming: events.filter((event) => event.date < upcomingEnd),
+      months: groupByMonth(events),
+      embedUrl: embedUrl(id),
+    };
   } catch (cause) {
     // A calendar outage must not break the build: the page falls back to a
     // link to the parish calendar instead.
     const message = cause instanceof Error ? cause.message : String(cause);
     console.warn(`[calendar] could not load the parish calendar: ${message}`);
-    return { ...base, configured: true, error: message };
+    return { ...base, configured: true, error: message, embedUrl: embedUrl(id) };
   }
 }

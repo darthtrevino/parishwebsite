@@ -65,11 +65,16 @@ GOOGLE_CALENDAR_ID='...' task build
 
 ## How events are displayed
 
-- Events are listed from today through the next 12 months, earliest first.
-- The homepage shows the next 6.
+- **Dates & Events** shows Google's month grid at the top, then every event for the next 12 months
+  grouped under month headings, with links to jump to a month.
+- The **homepage** shows an "Upcoming Events" list covering the next 14 days. It hides itself when
+  there is nothing in that window.
 - **All-day events** show only a date. Use these for feasts, fasts, and observances.
 - **Timed events** also show the start time in Pacific time. Use these for services.
 - The **location** is shown when the event has one.
+
+To change how far ahead each looks, edit `MONTHS_AHEAD` and `UPCOMING_DAYS` in
+`src/_data/calendar.ts`.
 
 ## Colour tags
 
@@ -109,10 +114,11 @@ host (Netlify: **Build hooks** plus a scheduled trigger).
 
 ## Troubleshooting
 
-| Symptom                              | Cause                                                                                             |
-| ------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| "not connected yet" notice           | `googleCalendarId` is still empty.                                                                |
-| "could not load the calendar" notice | The ID is wrong, or the calendar is not public. Check the build log for the `[calendar]` warning. |
-| Page loads but lists no events       | The calendar is connected and empty, or all its events are in the past.                           |
-| An event is missing                  | It is more than 12 months out. Change `MONTHS_AHEAD` in `src/_data/calendar.ts`.                  |
-| An all-day event shows the wrong day | It was created as a timed event just after midnight. Recreate it as all-day.                      |
+| Symptom                              | Cause                                                                                                                                                      |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "not connected yet" notice           | `googleCalendarId` is still empty.                                                                                                                         |
+| "could not load the calendar" notice | The ID is wrong, or the calendar is not public. Check the build log for the `[calendar]` warning.                                                          |
+| Page loads but lists no events       | The calendar is connected and empty, or all its events are in the past.                                                                                    |
+| The month grid is missing            | `GOOGLE_CALENDAR_ID` holds a full ICS URL. Only public calendars can be embedded, and embedding a private URL would publish it, so the grid is suppressed. |
+| An event is missing                  | It is more than 12 months out. Change `MONTHS_AHEAD` in `src/_data/calendar.ts`.                                                                           |
+| An all-day event shows the wrong day | It was created as a timed event just after midnight. Recreate it as all-day.                                                                               |
