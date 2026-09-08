@@ -195,7 +195,7 @@
       "id": "paypal",
       "name": "PayPal",
       "checkout": "paypal",
-      "tagline": "The only one of the four that takes a donor-chosen recurring gift with no server and no platform fee. Cheapest card rail too, once the parish is a confirmed charity.",
+      "tagline": "Matches Square on donor-chosen recurring gifts, but keeps the donor on our page instead of redirecting them. Cheapest rail of the three card options on large gifts, once the parish is a confirmed charity.",
       "fee": {
         "percent": 1.99,
         "fixed": 49,
@@ -232,7 +232,7 @@
         },
         {
           "label": "API layer required",
-          "value": "No — the Donate SDK needs no server at all",
+          "value": "No — and unlike Square, without redirecting the donor",
           "status": "yes"
         },
         {
@@ -272,14 +272,14 @@
         },
         {
           "label": "Works on a static site",
-          "value": "Yes — a popup from a public button ID",
+          "value": "Yes — a popup that keeps the donor on our page",
           "status": "yes"
         }
       ],
       "caveats": [
         "The 1.99% rate needs PayPal confirmed charity status (PPCC), applied for at paypal.com/charities with proof of registration. Until it is granted the rate is 2.89% + $0.49, which is worse than Stripe.",
         "Recurring has to be switched on when the button is created on PayPal's site. It is not a parameter the SDK can pass, so changing it later means making a new button.",
-        "The $0.49 fixed fee is larger than Stripe's or Square's $0.30, so PayPal is comparatively worse on small gifts and better on large ones. The crossover against Stripe is around $10.",
+        "The $0.49 fixed fee is larger than Stripe's or Square's $0.30, so PayPal only wins on larger gifts: it beats Square above about $21, but does not beat Stripe's non-profit rate until about $90. Below that Stripe is cheaper.",
         "Donors without a PayPal account can still pay by card in the popup, but the extra step costs some completion rate compared with a card field sitting on the page.",
         "A donor-chosen amount is entered inside PayPal's popup rather than in the form above, so the amount and fund chosen on this page are passed as a starting point rather than enforced."
       ]

@@ -249,10 +249,11 @@ pageScripts:
               <p><strong>PayPal donate button</strong></p>
               <p>
                 PayPal's Donate SDK renders a real button here, and the gift is completed in a
-                PayPal popup layered over this page. It is the only option of the four that would
-                work in production exactly as it stands: a hosted button ID is a
-                <em>public</em> value, so there is no secret to hide and no server to run — and
-                unlike Stripe, the donor can still choose their own amount on a monthly schedule.
+                PayPal popup layered over this page. Square can also take a donor-chosen recurring
+                gift without a server, but only by sending the donor to a Square-hosted page — the
+                PayPal popup is the only one of the four whose <em>on-page</em> UI would work in
+                production as it stands, because a hosted button ID is a <em>public</em> value, so
+                there is no secret to hide and no server to run.
               </p>
               <p class="field-note">
                 Not switched on here on purpose: a live button would take real money into whichever
