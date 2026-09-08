@@ -1701,3 +1701,41 @@ a.card:hover {
   color: var(--ink-faint);
   cursor: not-allowed;
 }
+
+/* ---------------------------------------------------- giving: Zelle QR code */
+
+/* Zelle has no payment link, so a bank-issued QR code is the only thing on the
+   page a donor can act on directly. */
+.zelle-qr {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--band);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+.zelle-qr img {
+  flex: none;
+  width: 8rem;
+  height: 8rem;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  object-fit: contain;
+}
+
+.zelle-qr figcaption {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+@media (width <= 34rem) {
+  .zelle-qr {
+    flex-direction: column;
+    text-align: center;
+  }
+}

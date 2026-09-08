@@ -63,8 +63,11 @@ rather than a drawing of one.
 - **Donorbox — wired, dormant.** Setting `donorbox.campaign` embeds the real Donorbox iframe. It is
   left empty on purpose: a live iframe in a public preview would let a reviewer donate real money to
   whichever campaign it points at.
-- **Zelle — nothing to embed.** Zelle has no widget of any kind, so the panel shows the exact
-  handle, amount, and memo line with copy-to-clipboard buttons.
+- **Zelle — no checkout, but a QR code.** Zelle has no embeddable widget and no payment link, so the
+  panel shows the tag, handle, amount, and memo line with copy-to-clipboard buttons. If the parish
+  publishes its bank-issued QR code (`zelle.qr`), it is shown too — that is the one thing on the
+  panel a donor can act on directly from a phone. See
+  [Zelle links and QR codes](#zelle-links-and-qr-codes).
 
 What is real:
 
@@ -162,7 +165,7 @@ one costs on a real gift amount.
 | Card fee                        | 2.9% + $0.30, 2.2% for non-profits | 2.9% + $0.30 online                                                  | **2.95% platform fee _plus_ Stripe's 2.2%** | n/a                                                     |
 | Bank-transfer fee               | ACH 0.8%, capped at $5.00          | ACH available; rate unverified                                       | 2.95% on top of ACH                         | **$0**                                                  |
 | In-person giving                | Terminal hardware                  | Strong — same account covers the bookstore and candle desk           | No                                          | Awkward                                                 |
-| Fits our static site            | Hosted link or redirect            | Hosted link or redirect                                              | Embedded iframe                             | No integration at all                                   |
+| Fits our static site            | Hosted link or redirect            | Hosted link or redirect                                              | Embedded iframe                             | No link or checkout; QR code and tag only               |
 | Per-fund tracking               | One link per fund                  | One link per fund                                                    | Campaigns and designations                  | Memo line, reconciled by hand                           |
 | Automatic receipts              | Yes                                | Yes                                                                  | Yes, with tax-receipt templates             | **No**                                                  |
 | Donor self-service              | Customer Portal, no code           | Yes                                                                  | Donor accounts included                     | Bank app                                                |
@@ -199,12 +202,35 @@ dollars a month on a 600-dollar gift, against about seventeen on a card. Its wea
 the recurring custom amount, and the quantity workaround above is serviceable but slightly odd for
 donors.
 
-**Zelle** is not a competitor to either — it cannot be integrated into a website at all. There is no
-form, no dashboard, no receipt, and no donor record; the parish publishes an email address and the
-donor pushes money from their own banking app. But it is genuinely **free**, and that is worth real
-money on large gifts: a $5,000 building donation costs about $145 in card fees and $0 by Zelle.
-Payments are also irreversible, which removes chargeback risk but equally removes any recourse for a
-donor who makes a mistake.
+**Zelle** is not a competitor to either — it has no checkout to embed. There is no form, no
+dashboard, no receipt, and no donor record; the parish publishes a handle and the donor pushes money
+from their own banking app. But it is genuinely **free**, and that is worth real money on large
+gifts: a $5,000 building donation costs about $145 in card fees and $0 by Zelle. Payments are also
+irreversible, which removes chargeback risk but equally removes any recourse for a donor who makes a
+mistake.
+
+#### Zelle links and QR codes
+
+Two things are commonly assumed here, and only one is true.
+
+- **Payment links: no.** Zelle has no hosted checkout and no payment URL, so nothing on the giving
+  page can be a clickable "pay now" button the way a Stripe Payment Link can. The donor must start
+  the payment inside their own banking app. The
+  [standalone Zelle app shut down on 1 April 2025](https://www.zelle.com/), so there is no longer
+  even an app of Zelle's own to deep-link into.
+- **QR codes: yes.** A donor can scan a code and have the parish's details filled in for them; they
+  still type the amount and memo. The catch is that **the QR code must come from the parish's bank
+  app.** It encodes a Zelle directory token, so it cannot be generated from an email address — a QR
+  code made with a generic generator will not work. Export the parish's code and set `zelle.qr` in
+  `src/_data/giving.json` to a path under `src/assets/img/`.
+
+There is also a third option worth knowing about: a **Zelle tag**, a business handle such as
+`StElizabethOrthodox`, which is friendlier and far less error-prone than publishing an email address
+([Zelle for business](https://www.zelle.com/business)). It requires a business or non-profit account
+at a participating bank. Set `zelle.tag` and it is shown in place of the raw address.
+
+All three are optional and independent. Anything left empty is hidden rather than filled with a
+placeholder, so the page never invites a donor to send money to an address that does not exist.
 
 **Donorbox** is a different kind of option: it is not a payment processor but a donation platform
 that sits on top of one. It solves the recurring-custom-amount problem outright and needs nothing

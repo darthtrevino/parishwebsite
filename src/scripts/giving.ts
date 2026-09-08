@@ -69,7 +69,7 @@ interface GivingConfig {
   demo: boolean;
   publishableKey: string;
   defaultProvider: string;
-  zelle: { handle: string };
+  zelle: { tag: string; handle: string; qr: string };
   providers: GivingProvider[];
   funds: GivingFund[];
 }
@@ -167,7 +167,10 @@ function start(): void {
   const monthlyNote = must<HTMLSpanElement>(document, "#monthly-note");
   const paymentLegend = must<HTMLLegendElement>(document, "#payment-legend");
   const providerNameInline = must<HTMLSpanElement>(document, "#provider-name-inline");
+  const zelleTag = must<HTMLElement>(document, "#zelle-tag");
   const zelleHandle = must<HTMLElement>(document, "#zelle-handle");
+  const zelleQr = must<HTMLElement>(document, "#zelle-qr");
+  const zelleQrImage = must<HTMLImageElement>(document, "#zelle-qr-image");
   const zelleAmount = must<HTMLElement>(document, "#zelle-amount");
   const zelleMemo = must<HTMLElement>(document, "#zelle-memo");
   const zelleFrequencyNote = must<HTMLElement>(document, "#zelle-frequency-note");
@@ -342,9 +345,37 @@ function start(): void {
     }
   }
 
+  /**
+   * Zelle has no payment link, so there is nothing to hyperlink. What it does
+   * have is a tag (a business handle) and a QR code, both issued by the bank —
+   * the QR encodes a Zelle directory token and cannot be generated from an
+   * email address, so we only ever display one the parish supplies. Rows with
+   * nothing configured are hidden rather than filled with a placeholder.
+   */
+  function renderZelleIdentity(): void {
+    const { tag, handle, qr } = config.zelle;
+
+    zelleTag.textContent = tag ? `@${tag.replace(/^@/, "")}` : "";
+    zelleHandle.textContent = handle || "Not yet configured";
+    for (const row of document.querySelectorAll<HTMLElement>('[data-zelle-row="tag"]')) {
+      row.hidden = !tag;
+    }
+    // Fall back to the raw handle only when there is no friendlier tag.
+    for (const row of document.querySelectorAll<HTMLElement>('[data-zelle-row="handle"]')) {
+      row.hidden = Boolean(tag) && Boolean(handle);
+    }
+
+    if (qr) {
+      if (zelleQrImage.getAttribute("src") !== qr) zelleQrImage.src = qr;
+      zelleQr.hidden = false;
+    } else {
+      zelleQr.hidden = true;
+    }
+  }
+
   function renderZelle(): void {
     const gift = selectedCents();
-    zelleHandle.textContent = config.zelle.handle || "Not yet configured";
+    renderZelleIdentity();
     zelleAmount.textContent = gift > 0 ? formatCents(gift) : "Choose an amount above";
     zelleMemo.textContent = gift > 0 ? fund.title : "—";
     zelleFrequencyNote.textContent =

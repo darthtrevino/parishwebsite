@@ -60,7 +60,8 @@ pageScripts:
         is charged. Please use the offering plate or mail a check in the meantime.
       </div>
 
-      {% set demoConfig = { demo: true, publishableKey: giving.demo.publishableKey, defaultProvider: giving.demo.defaultProvider, zelle: giving.zelle, providers: giving.providers, funds: giving.funds } %}
+      {% set zelleConfig = { tag: giving.zelle.tag, handle: giving.zelle.handle, qr: giving.zelle.qr | url if giving.zelle.qr else "" } %}
+      {% set demoConfig = { demo: true, publishableKey: giving.demo.publishableKey, defaultProvider: giving.demo.defaultProvider, zelle: zelleConfig, providers: giving.providers, funds: giving.funds } %}
       <script type="application/json" id="giving-config">
         {{ demoConfig | dump | safe }}
       </script>
@@ -263,12 +264,19 @@ pageScripts:
           <div data-payment="zelle" hidden>
             <div class="zelle-instructions">
               <p>
-                Zelle has no form to embed. The donor opens their own banking app and sends the gift
-                directly to the parish, which is why it costs nothing to either side.
+                Zelle has no payment link and no checkout to embed, so nothing here can be a
+                clickable button. The donor opens their own banking app and sends the gift directly
+                to the parish, which is why it costs nothing to either side. Scanning a QR code
+                saves them typing an address, but they still enter the amount themselves.
               </p>
               <dl class="receipt-list copyable">
-                <dt>Send to</dt>
-                <dd>
+                <dt data-zelle-row="tag" hidden>Zelle tag</dt>
+                <dd data-zelle-row="tag" hidden>
+                  <span id="zelle-tag">Not yet configured</span>
+                  <button type="button" class="copy-button" data-copy="zelle-tag">Copy</button>
+                </dd>
+                <dt data-zelle-row="handle">Send to</dt>
+                <dd data-zelle-row="handle">
                   <span id="zelle-handle">Not yet configured</span>
                   <button type="button" class="copy-button" data-copy="zelle-handle">Copy</button>
                 </dd>
@@ -283,6 +291,13 @@ pageScripts:
                   <button type="button" class="copy-button" data-copy="zelle-memo">Copy</button>
                 </dd>
               </dl>
+              <figure class="zelle-qr" id="zelle-qr" hidden>
+                <img id="zelle-qr-image" alt="Zelle QR code for Saint Elizabeth Orthodox Church" />
+                <figcaption>
+                  Scan with your phone's banking app to open a payment already addressed to the
+                  parish. You still type the amount and memo yourself.
+                </figcaption>
+              </figure>
               <p class="field-note" id="zelle-frequency-note"></p>
               <p class="field-note">
                 Nothing here is automatic: no receipt is issued, and the treasurer matches the memo
