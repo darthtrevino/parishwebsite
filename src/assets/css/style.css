@@ -841,9 +841,14 @@ a.card:hover {
   color: #7c5f1f;
 }
 
-.tag-observance {
-  background: #ececec;
-  color: #4a4a4a;
+.tag-charity {
+  background: #e4efe6;
+  color: #2f6b45;
+}
+
+.tag-social {
+  background: #f9ebef;
+  color: #8a3d5e;
 }
 
 .news-list {

@@ -7,7 +7,7 @@ eleventyExcludeFromCollections: true
   {%- for item in collections.all %}
   {%- if item.url and not item.data.eleventyExcludeFromCollections %}
   <url>
-    <loc>{{ item.url | absoluteUrl }}</loc>
+    <loc>{{ item.url | absUrl }}</loc>
     <lastmod>{{ item.date | isoDate }}</lastmod>
   </url>
   {%- endif %}

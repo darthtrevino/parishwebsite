@@ -78,18 +78,21 @@ To change how far ahead each looks, edit `MONTHS_AHEAD` and `UPCOMING_DAYS` in
 
 ## Colour tags
 
-Each event gets a coloured tag. An ICS feed carries no category field, so the tag is inferred from
-words in the **event title**. The first rule that matches wins:
+Some events get a coloured tag. An ICS feed carries no category field, so the tag is inferred from
+words in the **event title**. The first rule that matches wins; an event matching nothing gets no
+tag, which is normal for ordinary services like Divine Liturgy or Vespers.
 
-| Tag          | Title contains any of                                                                                                                                                                          |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pascha`     | pascha, holy week, great and holy, bright week                                                                                                                                                 |
-| `patronal`   | elizabeth, patronal, parish feast, altar feast                                                                                                                                                 |
-| `fast`       | fast, lent, lenten, abstinence, no meat, strict                                                                                                                                                |
-| `feast`      | nativity, theophany, epiphany, annunciation, transfiguration, dormition, ascension, pentecost, presentation, meeting, exaltation, cross, palm sunday, entrance, beheading, circumcision, feast |
-| `observance` | anything else — the default                                                                                                                                                                    |
+| Tag        | Title contains any of                                                                                                                                                                          |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pascha`   | pascha, holy week, great and holy, bright week                                                                                                                                                 |
+| `patronal` | elizabeth, patronal, parish feast, altar feast                                                                                                                                                 |
+| `charity`  | homeless, charity, food bank, outreach, almsgiving, benefit                                                                                                                                    |
+| `social`   | fellowship, meal, potluck, picnic, coffee hour, social, banquet                                                                                                                                |
+| `fast`     | fast, lent, lenten, abstinence, no meat, strict                                                                                                                                                |
+| `feast`    | nativity, theophany, epiphany, annunciation, transfiguration, dormition, ascension, pentecost, presentation, meeting, exaltation, cross, palm sunday, entrance, beheading, circumcision, feast |
 
-So `Nativity Fast begins` is tagged `fast` (the fast rule is checked before the feast rule), and
+So `Homeless Ministry` is tagged `charity`, `Fellowship Meal` is tagged `social`,
+`Nativity Fast begins` is tagged `fast` (the fast rule is checked before the feast rule), and
 `Nativity of our Lord` is tagged `feast`. If an event gets the wrong tag, rename it in Google
 Calendar; to change the rules themselves, edit `KIND_RULES` in `src/_data/calendar.ts`.
 

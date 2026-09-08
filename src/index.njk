@@ -5,7 +5,7 @@ description: A vibrant Orthodox Christian parish on the Kitsap Peninsula in Wash
 permalink: /
 ---
 
-<section class="hero" style="--banner: url('/assets/img/photos/banner-home.jpg')">
+<section class="hero" style="--banner: url('{{ '/assets/img/photos/banner-home.jpg' | url }}')">
   <div class="wrap">
     <p class="hero-tagline">Orthodox Church in America &middot; Poulsbo, Washington</p>
   </div>
@@ -91,7 +91,7 @@ permalink: /
             {{ item.title }}
             {% if not item.allDay %}<span class="calendar-meta">{{ item.start | eventTime }}</span>{% endif %}
           </span>
-          <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
+          {% if item.kind %}<span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>{% endif %}
         </li>
       {% endfor %}
     </ul>

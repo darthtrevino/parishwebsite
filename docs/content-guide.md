@@ -76,15 +76,16 @@ The calendar is not edited here at all. Add, move, or delete the event in the pa
 Calendar** and it appears on the website the next time the site is built — both on the homepage and
 on Resources → Dates & Events.
 
-The coloured label on each event is worked out from words in the event's title:
+Some events carry a coloured label, worked out from words in the event's title:
 
 - `feast` — a great feast
 - `fast` — the start of a fasting season
 - `pascha` — Pascha itself
 - `patronal` — our patronal feast, July 18
-- `observance` — everything else
+- `charity` — outreach such as the Homeless Ministry
+- `social` — parish gatherings such as the Fellowship Meal
 
-If an event shows the wrong label, rename it in Google Calendar. See
+Ordinary services carry no label. If an event shows the wrong one, rename it in Google Calendar. See
 [calendar-setup.md](calendar-setup.md) for the full keyword table and for first-time setup.
 
 ## Adding images

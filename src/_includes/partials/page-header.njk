@@ -7,7 +7,7 @@
 #}
 <header
   class="page-header"
-  style="--banner: url('{{ banner | default('/assets/img/photos/banner-our-parish.jpg', true) }}')"
+  style="--banner: url('{{ banner | default('/assets/img/photos/banner-our-parish.jpg', true) | url }}')"
 >
   <div class="wrap">
     {% if hdrEyebrow %}<p class="eyebrow">{{ hdrEyebrow | safe }}</p>{% endif %}

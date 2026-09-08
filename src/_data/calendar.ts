@@ -13,7 +13,7 @@ const MAX_OCCURRENCES_PER_EVENT = 400;
 /** How long a fetched calendar is reused before Eleventy refetches it. */
 const CACHE_DURATION = "1h";
 
-export type EventKind = "pascha" | "patronal" | "feast" | "fast" | "observance";
+export type EventKind = "pascha" | "patronal" | "feast" | "fast" | "charity" | "social";
 
 export interface CalendarEvent {
   /** ISO date (yyyy-mm-dd) in the parish timezone. */
@@ -24,7 +24,8 @@ export interface CalendarEvent {
   title: string;
   description: string;
   location: string;
-  kind: EventKind;
+  /** null when no rule matches, in which case no tag is shown. */
+  kind: EventKind | null;
 }
 
 export interface CalendarMonth {
@@ -51,11 +52,14 @@ export interface CalendarData {
 /**
  * Google Calendar has no notion of a category we can read from an ICS feed, so
  * the kind (which drives the coloured tag) is inferred from the event title.
- * Order matters: the first match wins.
+ * Order matters: the first match wins. An event matching nothing is untagged,
+ * which is the common case for ordinary services.
  */
 const KIND_RULES: Array<{ kind: EventKind; pattern: RegExp }> = [
   { kind: "pascha", pattern: /\b(pascha|holy week|great and holy|bright week)\b/i },
   { kind: "patronal", pattern: /\b(elizabeth|patronal|parish feast|altar feast)\b/i },
+  { kind: "charity", pattern: /\b(homeless|charity|food bank|outreach|almsgiving|benefit)\b/i },
+  { kind: "social", pattern: /\b(fellowship|meal|potluck|picnic|coffee hour|social|banquet)\b/i },
   { kind: "fast", pattern: /\b(fast|lent|lenten|abstinence|no meat|strict)\b/i },
   {
     kind: "feast",
@@ -64,11 +68,11 @@ const KIND_RULES: Array<{ kind: EventKind; pattern: RegExp }> = [
   },
 ];
 
-function classify(title: string): EventKind {
+function classify(title: string): EventKind | null {
   for (const { kind, pattern } of KIND_RULES) {
     if (pattern.test(title)) return kind;
   }
-  return "observance";
+  return null;
 }
 
 function calendarId(): string {

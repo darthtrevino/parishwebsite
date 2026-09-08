@@ -51,7 +51,7 @@ description: Calendar of services, feasts, and parish events at Saint Elizabeth 
               {% if not item.allDay %}<span class="calendar-meta">{{ item.start | eventTime }}</span>{% endif %}
               {% if item.location %}<span class="calendar-meta">{{ item.location }}</span>{% endif %}
             </span>
-            <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
+            {% if item.kind %}<span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>{% endif %}
           </li>
         {% endfor %}
       </ul>

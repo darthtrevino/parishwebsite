@@ -3,9 +3,17 @@ import { pathToFileURL } from "node:url";
 import markdownIt from "markdown-it";
 import markdownItAnchor from "markdown-it-anchor";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
+import { HtmlBasePlugin } from "@11ty/eleventy";
 
 import site from "./src/_data/site.json" with { type: "json" };
 import navigation from "./src/_data/navigation.json" with { type: "json" };
+
+/**
+ * The site normally lives at the root of its own domain, but a GitHub Pages
+ * project site is served from /<repo>/. PATH_PREFIX lets that deploy rewrite
+ * every root-relative URL without any change to the templates.
+ */
+const PATH_PREFIX = process.env.PATH_PREFIX ?? "/";
 
 interface NavigationItem {
   title: string;
@@ -62,6 +70,8 @@ export default function configure(eleventyConfig: EleventyConfig) {
     markdownIt({ html: true, linkify: true, typographer: true }).use(markdownItAnchor),
   );
 
+  eleventyConfig.addPlugin(HtmlBasePlugin);
+
   eleventyConfig.addPlugin(feedPlugin, {
     type: "atom",
     outputPath: "/news/feed.xml",
@@ -96,7 +106,10 @@ export default function configure(eleventyConfig: EleventyConfig) {
 
   eleventyConfig.addFilter("limit", <T>(items: T[], count: number) => items.slice(0, count));
 
-  eleventyConfig.addFilter("absoluteUrl", (path: string) => new URL(path, site.url).toString());
+  // Named absUrl rather than absoluteUrl: @11ty/eleventy-plugin-rss registers a
+  // Nunjucks filter of that name which takes precedence in .njk templates and
+  // silently returns its input when called without a base.
+  eleventyConfig.addFilter("absUrl", (path: string) => new URL(path, site.url).toString());
 
   eleventyConfig.addCollection("news", (collection: CollectionApi) =>
     collection
@@ -112,7 +125,12 @@ export default function configure(eleventyConfig: EleventyConfig) {
     (navigation as NavigationItem[]).filter((item) => Boolean(item.children)),
   );
 
+  // Preview deploys (GitHub Pages) must not be indexed: a public copy of the
+  // parish site would compete with the real one in search results.
+  eleventyConfig.addGlobalData("isPreview", PATH_PREFIX !== "/");
+
   return {
+    pathPrefix: PATH_PREFIX,
     dir: {
       input: "src",
       output: "_site",
