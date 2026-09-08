@@ -1,16 +1,33 @@
 /**
- * Giving page — mock checkout and provider comparison.
+ * Giving page — provider comparison and mock checkout.
  *
  * IMPORTANT: this is a prototype of the donor experience, not a working
  * payment form. It exists so the parish can compare Stripe, Square, Donorbox,
  * and Zelle side by side and see how each one changes the flow and the fees.
  *
- * Only the Stripe panel mounts a real payment element (Stripe.js v3 Elements,
- * which keeps card details inside Stripe's own iframe). Even there, no charge
- * is ever attempted: moving money needs a PaymentIntent created server-side
- * with a secret key, and a static site has no server. The other panels are
- * static representations, because Square and Donorbox both require credentials
- * tied to a real account and Zelle cannot be embedded at all.
+ * The form reshapes itself around what each provider can actually do, taken
+ * from `capabilities` in src/_data/giving.json. The important case is the
+ * monthly option: Stripe Payment Links cannot combine a donor-chosen amount
+ * with a recurring schedule, so for Stripe the option is removed rather than
+ * offered and then quietly broken.
+ *
+ * Where a provider ships a client-side UI that works without a server, we use
+ * the real thing rather than a mock-up:
+ *
+ *   - Stripe    Payment Element in deferred-intent mode. It renders from a
+ *               publishable key alone, with no PaymentIntent, so a static site
+ *               can show the genuine article — including the US bank account
+ *               (ACH) tab, which is the cheapest rail for a regular tithe.
+ *   - Square    Web Payments SDK, loaded only when an application ID and
+ *               location ID are configured. Those are per-account values.
+ *   - Donorbox  Its hosted form as an iframe, only when a campaign is set.
+ *   - Zelle     Nothing embeddable exists, so we show the exact details to
+ *               copy into a banking app.
+ *
+ * No provider is ever charged. Taking money requires a server-side call with a
+ * secret key (Stripe's PaymentIntent, Square's CreatePayment), and a static
+ * site has none. Stripe's `elements.submit()` runs real validation but creates
+ * no intent; Square's card is attached but `tokenize()` is never called.
  *
  * See docs/giving-setup.md for the routes to real payments.
  */
@@ -28,11 +45,24 @@ interface ProviderFee {
   label: string;
 }
 
+type RecurringSupport = "yes" | "no" | "donor-scheduled";
+
+interface ProviderCapabilities {
+  recurring: RecurringSupport;
+  recurringNote: string;
+  coverFees: boolean;
+  ui: "stripe-payment-element" | "square-web-payments" | "donorbox-iframe" | "none";
+  uiNote: string;
+}
+
 interface GivingProvider {
   id: string;
   name: string;
   checkout: "stripe" | "square" | "iframe" | "zelle";
   fee: ProviderFee;
+  capabilities: ProviderCapabilities;
+  square?: { environment: string; applicationId: string; locationId: string };
+  donorbox?: { campaign: string };
 }
 
 interface GivingConfig {
@@ -49,6 +79,8 @@ type Frequency = "once" | "monthly";
 const MIN_CENTS = 100;
 const MAX_CENTS = 5_000_000;
 const SIMULATED_LATENCY_MS = 1400;
+/** Stripe rejects an Elements amount below 50 cents, so previews start here. */
+const PREVIEW_CENTS = 5000;
 
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 const moneyWhole = new Intl.NumberFormat("en-US", {
@@ -83,6 +115,19 @@ function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
+function loadScript(src: string): Promise<void> {
+  const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
+  if (existing) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.addEventListener("load", () => resolve());
+    script.addEventListener("error", () => reject(new Error(`Could not load ${src}`)));
+    document.head.append(script);
+  });
+}
+
 function start(): void {
   const formEl = document.querySelector<HTMLFormElement>("#giving-form");
   if (!formEl) return;
@@ -115,6 +160,8 @@ function start(): void {
   const receiptBody = must<HTMLDivElement>(document, "#giving-receipt-body");
   const restart = must<HTMLButtonElement>(document, "#giving-restart");
   const frequencyFields = must<HTMLFieldSetElement>(document, "#frequency-fields");
+  const monthlyField = must<HTMLLabelElement>(document, "#frequency-monthly-field");
+  const monthlyLabel = must<HTMLSpanElement>(document, "#frequency-monthly-label");
   const monthlyRadio = must<HTMLInputElement>(document, "#frequency-monthly");
   const onceRadio = must<HTMLInputElement>(document, "#frequency-once");
   const monthlyNote = must<HTMLSpanElement>(document, "#monthly-note");
@@ -124,6 +171,12 @@ function start(): void {
   const zelleAmount = must<HTMLElement>(document, "#zelle-amount");
   const zelleMemo = must<HTMLElement>(document, "#zelle-memo");
   const zelleFrequencyNote = must<HTMLElement>(document, "#zelle-frequency-note");
+  const squareMount = must<HTMLDivElement>(document, "#square-card");
+  const squarePlaceholder = must<HTMLDivElement>(document, "#square-placeholder");
+  const squareErrors = must<HTMLParagraphElement>(document, "#square-errors");
+  const squareNote = must<HTMLParagraphElement>(document, "#square-note");
+  const donorboxMount = must<HTMLDivElement>(document, "#donorbox-embed");
+  const donorboxPlaceholder = must<HTMLDivElement>(document, "#donorbox-placeholder");
 
   const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-provider-tab]"));
   const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-provider-panel]"));
@@ -135,7 +188,6 @@ function start(): void {
     config.providers[0]!;
   let frequency: Frequency = "once";
   let presetCents: number | null = null;
-  let cardComplete = false;
   let processing = false;
 
   function selectedCents(): number {
@@ -148,6 +200,128 @@ function start(): void {
   function feeCents(): number {
     return coverFees.checked ? processingFee(selectedCents(), provider.fee) : 0;
   }
+
+  function chargedCents(): number {
+    return selectedCents() + feeCents();
+  }
+
+  /** Whether a monthly gift can actually be arranged for this fund and provider. */
+  function monthlyAvailable(): boolean {
+    return fund.recurring && provider.capabilities.recurring !== "no";
+  }
+
+  // ---------------------------------------------------------------- Stripe
+
+  let stripe: Stripe | null = null;
+  let stripeElements: StripeElements | null = null;
+  let paymentElement: StripePaymentElement | null = null;
+  let stripeMode: "payment" | "subscription" = "payment";
+
+  function mountStripe(): void {
+    if (paymentElement || !config.publishableKey || typeof Stripe !== "function") return;
+    const styles = getComputedStyle(document.body);
+    stripe = Stripe(config.publishableKey);
+    stripeMode = frequency === "monthly" ? "subscription" : "payment";
+    stripeElements = stripe.elements({
+      mode: stripeMode,
+      amount: Math.max(chargedCents(), PREVIEW_CENTS),
+      currency: "usd",
+      appearance: {
+        theme: "stripe",
+        variables: {
+          colorPrimary: styles.getPropertyValue("--teal").trim() || "#1d7e8b",
+          colorText: styles.getPropertyValue("--ink").trim() || "#1a1a1a",
+          fontFamily: styles.getPropertyValue("--sans").trim() || "sans-serif",
+          borderRadius: "2px",
+        },
+      },
+    });
+    paymentElement = stripeElements.create("payment", { layout: "tabs" });
+    paymentElement.on("loaderror", (event) => {
+      cardErrors.textContent =
+        event.error.message ??
+        "The secure payment field could not load. You can still give by mail using the details below.";
+      cardErrors.hidden = false;
+    });
+    paymentElement.on("change", () => {
+      cardErrors.hidden = true;
+    });
+    paymentElement.mount("#payment-element");
+  }
+
+  /**
+   * Stripe needs to know the amount and whether the gift repeats, because that
+   * changes which payment methods it offers. `mode` cannot be changed after
+   * creation, so a switch between one-time and monthly rebuilds the element.
+   */
+  function syncStripe(): void {
+    if (!stripeElements || provider.capabilities.ui !== "stripe-payment-element") return;
+    const wanted: "payment" | "subscription" = frequency === "monthly" ? "subscription" : "payment";
+    if (wanted !== stripeMode) {
+      paymentElement?.destroy();
+      paymentElement = null;
+      stripeElements = null;
+      mountStripe();
+      return;
+    }
+    stripeElements.update({ amount: Math.max(chargedCents(), PREVIEW_CENTS) });
+  }
+
+  // ---------------------------------------------------------------- Square
+
+  let squareStarted = false;
+  let squareCard: SquareCard | null = null;
+
+  async function mountSquare(): Promise<void> {
+    const settings = provider.square;
+    if (squareStarted || !settings?.applicationId || !settings.locationId) return;
+    squareStarted = true;
+    const host =
+      settings.environment === "production"
+        ? "https://web.squarecdn.com/v1/square.js"
+        : "https://sandbox.web.squarecdn.com/v1/square.js";
+    try {
+      await loadScript(host);
+      if (!window.Square) throw new Error("Square SDK did not initialise");
+      const payments = window.Square.payments(settings.applicationId, settings.locationId);
+      squareCard = await payments.card();
+      await squareCard.attach("#square-card");
+      squareMount.hidden = false;
+      squarePlaceholder.hidden = true;
+      squareNote.textContent =
+        "This is Square's real card field, from the Web Payments SDK. As with Stripe, nothing is charged here: completing a payment needs a server-side CreatePayment call with an access token.";
+    } catch (error) {
+      squareStarted = false;
+      squareErrors.textContent =
+        error instanceof Error ? error.message : "Square's payment field could not load.";
+      squareErrors.hidden = false;
+    }
+  }
+
+  // -------------------------------------------------------------- Donorbox
+
+  function mountDonorbox(): void {
+    const campaign = provider.donorbox?.campaign;
+    if (!campaign || donorboxMount.childElementCount > 0) return;
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://donorbox.org/embed/${encodeURIComponent(campaign)}`;
+    iframe.name = "donorbox";
+    iframe.height = "900px";
+    iframe.width = "100%";
+    iframe.style.maxWidth = "500px";
+    iframe.style.minWidth = "250px";
+    iframe.style.maxHeight = "none";
+    iframe.allow = "payment";
+    iframe.setAttribute("seamless", "seamless");
+    iframe.setAttribute("frameborder", "0");
+    iframe.setAttribute("scrolling", "no");
+    iframe.title = "Donorbox donation form";
+    donorboxMount.append(iframe);
+    donorboxMount.hidden = false;
+    donorboxPlaceholder.hidden = true;
+  }
+
+  // --------------------------------------------------------------- render
 
   function renderAmounts(): void {
     amountOptions.replaceChildren();
@@ -174,9 +348,7 @@ function start(): void {
     zelleAmount.textContent = gift > 0 ? formatCents(gift) : "Choose an amount above";
     zelleMemo.textContent = gift > 0 ? fund.title : "—";
     zelleFrequencyNote.textContent =
-      frequency === "monthly"
-        ? "For a monthly gift the donor sets up a repeating transfer in their own banking app. The parish cannot create, change, or cancel it."
-        : "";
+      frequency === "monthly" ? provider.capabilities.recurringNote : "";
   }
 
   function renderTotal(): void {
@@ -187,6 +359,7 @@ function start(): void {
       gift > 0 ? ` — ${formatCents(processingFee(gift, provider.fee))}` : "";
 
     if (provider.checkout === "zelle") renderZelle();
+    syncStripe();
 
     if (gift <= 0) {
       summary.textContent = "Choose an amount to continue.";
@@ -206,14 +379,33 @@ function start(): void {
     submitLabel.textContent = `Give ${formatCents(gift + fee)}${frequency === "monthly" ? " monthly" : ""}`;
   }
 
+  /**
+   * The monthly option is removed outright when the provider cannot arrange a
+   * donor-chosen recurring gift, rather than shown and then failing later.
+   */
   function renderFrequency(): void {
-    monthlyRadio.disabled = !fund.recurring;
-    if (!fund.recurring && frequency === "monthly") {
+    const support = provider.capabilities.recurring;
+    const available = monthlyAvailable();
+
+    monthlyField.hidden = support === "no";
+    monthlyRadio.disabled = !available;
+    if (!available && frequency === "monthly") {
       frequency = "once";
       onceRadio.checked = true;
     }
-    frequencyFields.classList.toggle("is-limited", !fund.recurring);
-    monthlyNote.textContent = fund.recurring ? "" : `${fund.title} accepts one-time gifts only.`;
+    monthlyLabel.textContent =
+      support === "donor-scheduled" ? "Monthly (you set it up)" : "Monthly";
+    frequencyFields.classList.toggle("is-limited", !available);
+
+    if (support === "no") {
+      monthlyNote.textContent = provider.capabilities.recurringNote;
+    } else if (!fund.recurring) {
+      monthlyNote.textContent = `${fund.title} accepts one-time gifts only.`;
+    } else if (support === "donor-scheduled") {
+      monthlyNote.textContent = provider.capabilities.recurringNote;
+    } else {
+      monthlyNote.textContent = "";
+    }
   }
 
   function setError(message: string, focus?: HTMLElement): void {
@@ -226,6 +418,7 @@ function start(): void {
     const next = config.providers.find((candidate) => candidate.id === id);
     if (!next) return;
     provider = next;
+    const caps = provider.capabilities;
 
     for (const tab of tabs) {
       const active = tab.dataset.providerTab === id;
@@ -241,24 +434,34 @@ function start(): void {
     providerNameInline.textContent = provider.name;
     paymentLegend.textContent = provider.checkout === "zelle" ? "How the donor pays" : "Card";
 
-    const isZelle = provider.checkout === "zelle";
-    coverFeesField.hidden = isZelle;
-    if (isZelle) coverFees.checked = false;
-    coverFeesLabel.firstChild!.textContent = `Cover ${provider.name}'s fee of ${provider.fee.label} so the parish receives my full gift`;
+    coverFeesField.hidden = !caps.coverFees;
+    if (!caps.coverFees) coverFees.checked = false;
+    coverFeesLabel.firstChild!.textContent = caps.coverFees
+      ? `Cover ${provider.name}'s fee of ${provider.fee.label} so the parish receives my full gift`
+      : "";
 
+    const isZelle = provider.checkout === "zelle";
     submit.hidden = isZelle;
     noSubmitNote.hidden = !isZelle;
     donorEmail.required = !isZelle;
 
     setError("");
     cardErrors.hidden = true;
+    squareErrors.hidden = true;
+
+    if (caps.ui === "stripe-payment-element") mountStripe();
+    if (caps.ui === "square-web-payments") void mountSquare();
+    if (caps.ui === "donorbox-iframe") mountDonorbox();
 
     const url = new URL(window.location.href);
     url.searchParams.set("provider", id);
     window.history.replaceState({}, "", url);
 
+    renderFrequency();
     renderTotal();
   }
+
+  // ----------------------------------------------------------------- wiring
 
   for (const tab of tabs) {
     tab.addEventListener("click", () => setProvider(tab.dataset.providerTab ?? ""));
@@ -304,33 +507,24 @@ function start(): void {
 
   coverFees.addEventListener("change", renderTotal);
 
-  let card: StripeCardElement | null = null;
-  if (typeof Stripe === "function" && config.publishableKey) {
-    const stripe = Stripe(config.publishableKey);
-    const styles = getComputedStyle(document.body);
-    card = stripe.elements().create("card", {
-      hidePostalCode: false,
-      style: {
-        base: {
-          color: styles.getPropertyValue("--ink").trim() || "#1a1a1a",
-          fontFamily: styles.getPropertyValue("--sans").trim(),
-          fontSize: "16px",
-          "::placeholder": { color: "#9a9a9a" },
-        },
-        invalid: { color: "#a5203a" },
-      },
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-copy]")) {
+    button.addEventListener("click", async () => {
+      const source = document.getElementById(button.dataset.copy ?? "");
+      const text = source?.textContent?.trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        const original = button.textContent;
+        button.textContent = "Copied";
+        button.classList.add("is-copied");
+        window.setTimeout(() => {
+          button.textContent = original;
+          button.classList.remove("is-copied");
+        }, 1600);
+      } catch {
+        // Clipboard access can be refused; the value is on screen to read.
+      }
     });
-    card.mount("#card-element");
-    card.on("change", (event) => {
-      cardComplete = event.complete;
-      cardErrors.textContent = event.error?.message ?? "";
-      cardErrors.hidden = !event.error;
-      if (event.complete) setError("");
-    });
-  } else {
-    cardErrors.textContent =
-      "The secure card field could not load. Check your connection, or give by mail using the details below.";
-    cardErrors.hidden = false;
   }
 
   function reset(): void {
@@ -339,8 +533,8 @@ function start(): void {
     coverFees.checked = false;
     donorName.value = "";
     donorEmail.value = "";
-    cardComplete = false;
-    card?.clear();
+    paymentElement?.clear();
+    void squareCard?.clear();
     cardErrors.hidden = true;
     setError("");
     receipt.hidden = true;
@@ -385,6 +579,12 @@ function start(): void {
     receipt.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
+  function finish(): void {
+    processing = false;
+    submit.disabled = false;
+    showReceipt(`demo_${Math.random().toString(36).slice(2, 10)}`);
+  }
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     if (processing || provider.checkout === "zelle") return;
@@ -405,34 +605,41 @@ function start(): void {
       setError("Please enter an email address so we can send your receipt.", donorEmail);
       return;
     }
-    // Only the Stripe panel has a live element to validate; the others are
-    // static representations, so there is nothing to check.
-    if (provider.checkout === "stripe") {
-      if (!card) {
-        setError("The secure card field is unavailable, so this gift cannot be completed here.");
-        return;
-      }
-      if (!cardComplete) {
-        setError("Please complete your card details.");
-        card.focus();
-        return;
-      }
-    }
 
     setError("");
     processing = true;
     submit.disabled = true;
     const restoreLabel = submitLabel.textContent ?? "Give";
-    submitLabel.textContent = "Processing…";
+    submitLabel.textContent = "Checking…";
 
-    // A real charge would happen here, against a PaymentIntent created
-    // server-side. In demo mode we only wait, so no card is sent anywhere.
-    window.setTimeout(() => {
-      processing = false;
-      submit.disabled = false;
-      submitLabel.textContent = restoreLabel;
-      showReceipt(`demo_${Math.random().toString(36).slice(2, 10)}`);
-    }, SIMULATED_LATENCY_MS);
+    // Only Stripe exposes a client-side validator that works without a server.
+    // Square's equivalent is tokenize(), which we deliberately never call.
+    const useStripeValidation =
+      provider.capabilities.ui === "stripe-payment-element" && stripeElements !== null;
+    const validate: Promise<string | null> = useStripeValidation
+      ? stripeElements!
+          .submit()
+          .then((result) => result.error?.message ?? null)
+          .catch(() => "The payment details could not be validated.")
+      : Promise.resolve(null);
+
+    void validate.then((message) => {
+      if (message) {
+        processing = false;
+        submit.disabled = false;
+        submitLabel.textContent = restoreLabel;
+        cardErrors.textContent = message;
+        cardErrors.hidden = false;
+        return;
+      }
+      submitLabel.textContent = "Processing…";
+      // A real charge would happen here, against an intent created server-side.
+      // In demo mode we only wait, so no card is ever submitted for payment.
+      window.setTimeout(() => {
+        submitLabel.textContent = restoreLabel;
+        finish();
+      }, SIMULATED_LATENCY_MS);
+    });
   });
 
   restart.addEventListener("click", reset);
@@ -442,7 +649,6 @@ function start(): void {
     ? requested!
     : provider.id;
 
-  renderFrequency();
   renderAmounts();
   setProvider(initial);
 }

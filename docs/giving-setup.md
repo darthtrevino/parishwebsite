@@ -26,28 +26,68 @@ changes both the specification panel and the donor experience below it, so the f
 payment step, and the receipt all update to match the provider being considered. The selection is
 reflected in the URL (`/giving/?provider=square`), which makes it linkable in a council email.
 
+### The form changes shape per provider
+
+The form is driven by the `capabilities` block on each provider in `src/_data/giving.json`, so it
+only ever offers what that provider can actually do. The important case is `capabilities.recurring`:
+
+| Value               | Provider         | Effect on the form                                                       |
+| ------------------- | ---------------- | ------------------------------------------------------------------------ |
+| `"no"`              | Stripe           | The monthly option is **removed**, with a note explaining why            |
+| `"yes"`             | Square, Donorbox | Monthly is offered normally                                              |
+| `"donor-scheduled"` | Zelle            | Monthly is offered but relabelled "Monthly (you set it up)", with a note |
+
+Removing the option matters more than it sounds. Stripe Payment Links cannot combine a donor-chosen
+amount with a monthly schedule, so offering a Monthly button on the Stripe panel would demonstrate a
+flow the parish could not actually build. Fund-level limits still apply on top: a fund with
+`recurring: false` disables monthly whatever the provider supports.
+
+`capabilities.coverFees` likewise hides the fee-coverage checkbox for Zelle, which has no fee to
+cover.
+
+### Provider-native UI
+
+Where a provider ships a client-side UI that works without a server, the page uses the real thing
+rather than a drawing of one.
+
+- **Stripe — real, live.** The page mounts Stripe's **Payment Element** in _deferred-intent mode_
+  (`stripe.elements({ mode, amount, currency })`), which renders from a publishable key alone with
+  no PaymentIntent and therefore no server. This is a genuine upgrade over the older card Element:
+  it shows the **US bank account (ACH)** tab alongside Card, which is exactly the rail that makes a
+  large regular tithe cheap. Validation is Stripe's own `elements.submit()`.
+- **Square — wired, dormant.** Square's Web Payments SDK is integrated and will attach a real card
+  field, but only once `square.applicationId` and `square.locationId` are set in `giving.json`.
+  Those are per-account values from the Square Developer Console. Until then the panel shows a
+  placeholder and says so. **Never commit a Square access token** — the application and location IDs
+  are public client-side values, the access token is not.
+- **Donorbox — wired, dormant.** Setting `donorbox.campaign` embeds the real Donorbox iframe. It is
+  left empty on purpose: a live iframe in a public preview would let a reviewer donate real money to
+  whichever campaign it points at.
+- **Zelle — nothing to embed.** Zelle has no widget of any kind, so the panel shows the exact
+  handle, amount, and memo line with copy-to-clipboard buttons.
+
 What is real:
 
-- The card field on the **Stripe** panel is a genuine **Stripe.js v3 card Element**, served from
-  `js.stripe.com` and rendered inside Stripe's own iframe, so card numbers never touch this site.
-- Card validation (number, expiry, CVC, postal code) is Stripe's, not ours.
+- The **Stripe** panel is a genuine Payment Element served from `js.stripe.com` and rendered inside
+  Stripe's own iframe, so card and bank details never touch this site.
+- Validation is Stripe's, not ours. Submitting with an incomplete card is refused by Stripe.
 - Amount selection, fund switching, monthly-vs-one-time rules, and the per-provider fee gross-up are
   real logic, computed from the rates in `src/_data/giving.json`.
 
 What is **not** real:
 
-- **No payment is taken and no card is ever submitted.** The script deliberately never calls
-  `stripe.createPaymentMethod()`; on submit it waits and then renders a mock receipt.
-- The Square and Donorbox panels are **static representations**, not live embeds. Both would need
-  credentials tied to a real account, and a live Donorbox iframe in a public preview would let a
-  reviewer accidentally donate real money to someone else's campaign.
+- **No payment is taken.** `elements.submit()` validates and collects, but it creates no
+  PaymentIntent, and the script never confirms anything. Verified in a browser: zero requests to
+  `payment_intents`, `payment_methods`, or any confirm endpoint. (Stripe.js does make a handful of
+  its own setup requests to `api.stripe.com` to render the element — those carry no payment.)
+  Square's `tokenize()` is likewise never called.
 - The `demo.publishableKey` in `giving.json` is Stripe's sample **test** key from their public
   documentation, not a parish key. Publishable keys are designed to be public and cannot move money.
 
 To test the flow, use Stripe's test card `4242 4242 4242 4242` with any future expiry and any CVC.
 
 To hide the mock, set `demo.enabled` to `false` in `src/_data/giving.json`. Provider rates,
-specifications, and caveats all live in the `providers` array in the same file.
+capabilities, specifications, and caveats all live in the `providers` array in the same file.
 
 ### Why a static site cannot take real payments on its own
 
@@ -59,8 +99,9 @@ We use **Stripe Payment Links**. This approach was chosen deliberately:
 
 - Payment Links are ordinary public URLs. **No API keys of any kind live in this repository.**
 - Stripe hosts the checkout page, so card data never touches our site and PCI scope stays minimal.
-- Recurring (monthly) giving, Apple Pay, Google Pay, ACH bank debit, and receipt emails are all
-  handled by Stripe with no code.
+- Recurring (monthly) giving at a **fixed** amount, Apple Pay, Google Pay, ACH bank debit, and
+  receipt emails are all handled by Stripe with no code. A donor-chosen _recurring_ amount is the
+  one thing Payment Links cannot do — see [Known gaps](#known-gaps).
 
 > **Never commit a Stripe secret key** (`sk_live_…`, `sk_test_…`, or a restricted key). Payment Link
 > URLs and publishable keys (`pk_…`) are safe to commit; secret keys are not.
@@ -80,8 +121,10 @@ _One-off_ before _Customer chooses price_ becomes available.
 
 So a Payment Link can offer an open amount, or a monthly amount, but not both at once. It cannot do
 "give 608 dollars and 33 cents every month," which is exactly what a parishioner tithing a
-proportion of income needs. The mock at `/giving/` currently offers that unsupported combination on
-Tithes & Offerings, so the flow it shows is not yet buildable with Payment Links alone.
+proportion of income needs.
+
+The mock at `/giving/` reflects this: on the Stripe panel the monthly option is **removed** rather
+than offered, with the reason shown inline. Switch to Square or Donorbox and it reappears.
 
 Three ways around it, cheapest-to-build first:
 

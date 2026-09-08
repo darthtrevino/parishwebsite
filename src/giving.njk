@@ -154,9 +154,9 @@ pageScripts:
               <input type="radio" name="frequency" id="frequency-once" value="once" checked />
               <span>One-time</span>
             </label>
-            <label>
+            <label id="frequency-monthly-field">
               <input type="radio" name="frequency" id="frequency-monthly" value="monthly" />
-              <span>Monthly</span>
+              <span id="frequency-monthly-label">Monthly</span>
             </label>
           </div>
           <span class="field-note" id="monthly-note" aria-live="polite"></span>
@@ -212,41 +212,50 @@ pageScripts:
           <legend id="payment-legend">Card</legend>
 
           <div data-payment="stripe" hidden>
-            <div id="card-element" class="card-element"></div>
+            <div id="payment-element" class="payment-element"></div>
             <p class="field-error" id="card-errors" role="alert" hidden></p>
             <p class="field-note">
-              Card details are entered directly into Stripe and never reach this website. In this
-              preview they are validated but never submitted — test with
-              <code>4242 4242 4242 4242</code>, any future expiry, and any CVC.
+              This is Stripe's real Payment Element, rendered straight from Stripe. Notice the
+              <strong>US bank account</strong> tab: ACH costs 0.8% capped at $5.00, so on a large
+              regular tithe it is dramatically cheaper than a card. Details are entered inside
+              Stripe's own frame and never reach this website. In this preview they are validated
+              but never charged — test with <code>4242 4242 4242 4242</code>, any future expiry, and
+              any CVC.
             </p>
           </div>
 
           <div data-payment="square" hidden>
-            <div class="card-element is-placeholder" aria-hidden="true">
+            <div id="square-card" class="payment-element" hidden></div>
+            <div class="card-element is-placeholder" id="square-placeholder" aria-hidden="true">
               <span class="placeholder-brand"></span>
               <span class="placeholder-text">Card number</span>
               <span class="placeholder-meta">MM / YY</span>
               <span class="placeholder-meta">CVC</span>
             </div>
-            <p class="field-note">
-              A static representation. Square's Web Payments SDK needs an application ID tied to a
-              real Square account, so unlike the Stripe panel this field is not a live element. The
-              donor experience is otherwise the same: a hosted donation link that accepts a
-              donor-chosen amount on a one-time <em>or recurring</em> schedule.
+            <p class="field-error" id="square-errors" role="alert" hidden></p>
+            <p class="field-note" id="square-note">
+              Square's Web Payments SDK is wired up here, but it needs an application ID and
+              location ID tied to a real Square account, so it stays dormant until those are filled
+              into <code>src/_data/giving.json</code>. Square's advantage is above this field rather
+              than in it: a donation link takes a donor-chosen amount on a one-time
+              <em>or recurring</em> schedule.
             </p>
           </div>
 
           <div data-payment="iframe" hidden>
-            <div class="embed-placeholder">
+            <div id="donorbox-embed" hidden></div>
+            <div class="embed-placeholder" id="donorbox-placeholder">
               <p><strong>Donorbox donation form</strong></p>
               <p>
                 Donorbox is embedded as an <code>&lt;iframe&gt;</code>, so the donor never leaves
                 this page. The form itself — amount, frequency, card entry, receipts — is served and
-                operated by Donorbox, which holds the Stripe credentials on its own servers.
+                operated by Donorbox, which holds the Stripe credentials on its own servers. That is
+                why it can offer a donor-chosen monthly amount when Stripe alone cannot.
               </p>
               <p class="field-note">
                 Not embedded live here on purpose: a real Donorbox iframe would take real money for
-                whichever campaign it points at.
+                whichever campaign it points at. Set <code>donorbox.campaign</code> in
+                <code>src/_data/giving.json</code> to switch it on.
               </p>
             </div>
           </div>
@@ -257,13 +266,22 @@ pageScripts:
                 Zelle has no form to embed. The donor opens their own banking app and sends the gift
                 directly to the parish, which is why it costs nothing to either side.
               </p>
-              <dl class="receipt-list">
+              <dl class="receipt-list copyable">
                 <dt>Send to</dt>
-                <dd id="zelle-handle">Not yet configured</dd>
+                <dd>
+                  <span id="zelle-handle">Not yet configured</span>
+                  <button type="button" class="copy-button" data-copy="zelle-handle">Copy</button>
+                </dd>
                 <dt>Amount</dt>
-                <dd id="zelle-amount">Choose an amount above</dd>
+                <dd>
+                  <span id="zelle-amount">Choose an amount above</span>
+                  <button type="button" class="copy-button" data-copy="zelle-amount">Copy</button>
+                </dd>
                 <dt>Memo</dt>
-                <dd id="zelle-memo">—</dd>
+                <dd>
+                  <span id="zelle-memo">—</span>
+                  <button type="button" class="copy-button" data-copy="zelle-memo">Copy</button>
+                </dd>
               </dl>
               <p class="field-note" id="zelle-frequency-note"></p>
               <p class="field-note">

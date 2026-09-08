@@ -13,7 +13,7 @@
     "handle": "",
     "note": "Set this to the email address or phone number enrolled with the parish bank account once Zelle is set up. Until it is filled in, the Zelle panel says so rather than inventing an address."
   },
-  "providersNote": "Comparison data for the provider selector on the Giving page. Cursory analysis, September 2026, verified against vendor documentation rather than live accounts — see docs/giving-setup.md. `status` drives the colour: yes / no / partial / info.",
+  "providersNote": "Comparison data for the provider selector on the Giving page. Cursory analysis, September 2026, verified against vendor documentation rather than live accounts — see docs/giving-setup.md. `status` drives the colour: yes / no / partial / info. `capabilities.recurring` drives the form itself: \"yes\" offers a monthly option, \"no\" removes it, and \"donor-scheduled\" offers it but explains that the donor sets it up in their own bank app.",
   "providers": [
     {
       "id": "stripe",
@@ -24,6 +24,13 @@
         "percent": 2.2,
         "fixed": 30,
         "label": "2.2% + $0.30"
+      },
+      "capabilities": {
+        "recurring": "no",
+        "recurringNote": "Stripe Payment Links cannot combine a donor-chosen amount with a monthly schedule, so the monthly option is hidden here. See docs/giving-setup.md for the three workarounds.",
+        "coverFees": true,
+        "ui": "stripe-payment-element",
+        "uiNote": "Real Stripe Payment Element, rendered in deferred-intent mode from a publishable key alone. It shows the card and US bank account (ACH) tabs exactly as a donor would see them. Validation is Stripe's own; no PaymentIntent is created and nothing is charged."
       },
       "specs": [
         {
@@ -100,6 +107,19 @@
         "percent": 2.9,
         "fixed": 30,
         "label": "2.9% + $0.30"
+      },
+      "capabilities": {
+        "recurring": "yes",
+        "recurringNote": "",
+        "coverFees": true,
+        "ui": "square-web-payments",
+        "uiNote": "Square's Web Payments SDK is wired up but stays dormant until `square.applicationId` and `square.locationId` are filled in below. Those are per-account values from the Square Developer Console. Never commit a Square access token."
+      },
+      "square": {
+        "environment": "sandbox",
+        "applicationId": "",
+        "locationId": "",
+        "note": "From the Square Developer Console. The application ID and location ID are public client-side values; the ACCESS TOKEN is a secret and must never be placed in this repository. Set `environment` to \"production\" when going live."
       },
       "specs": [
         {
@@ -179,6 +199,17 @@
         "fixed": 30,
         "label": "5.15% + $0.30"
       },
+      "capabilities": {
+        "recurring": "yes",
+        "recurringNote": "",
+        "coverFees": true,
+        "ui": "donorbox-iframe",
+        "uiNote": "Donorbox supplies the whole form as an iframe. It stays a placeholder until `donorbox.campaign` is set, so that nobody reviewing this preview can accidentally donate real money to somebody else's campaign."
+      },
+      "donorbox": {
+        "campaign": "",
+        "note": "The Donorbox campaign slug, i.e. the last path segment of https://donorbox.org/<campaign>. Leaving it empty keeps the panel as a description rather than a live donation form."
+      },
       "specs": [
         {
           "label": "Card fee",
@@ -256,6 +287,13 @@
         "percent": 0,
         "fixed": 0,
         "label": "None"
+      },
+      "capabilities": {
+        "recurring": "donor-scheduled",
+        "recurringNote": "A Zelle standing order is created by the donor in their own banking app. The parish cannot set one up, change it, or cancel it.",
+        "coverFees": false,
+        "ui": "none",
+        "uiNote": "Zelle has no embeddable UI of any kind. The best we can do is show the exact details to copy into a banking app."
       },
       "specs": [
         {

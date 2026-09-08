@@ -36,6 +36,13 @@
   box-sizing: border-box;
 }
 
+/* Several components set an explicit `display`, which outranks the user-agent
+   `[hidden] { display: none }` rule and leaves elements on screen after they
+   have been hidden from script. Enforce it once here. */
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -1496,10 +1503,6 @@ a.card:hover {
   opacity: 0.75;
 }
 
-.provider-panel[hidden] {
-  display: none;
-}
-
 .provider-panel:focus-visible {
   outline: 2px solid var(--link);
   outline-offset: 4px;
@@ -1628,14 +1631,73 @@ a.card:hover {
   margin: 1.2rem 0;
 }
 
-#giving-submit[hidden],
-#cover-fees-field[hidden],
-[data-payment][hidden] {
-  display: none;
-}
-
 @media (width <= 40rem) {
   .provider-tab {
     flex-basis: 100%;
   }
+}
+
+/* ------------------------------------------- giving: provider-native fields */
+
+.payment-element {
+  min-height: 3rem;
+}
+
+/* Stripe and Square both render into an iframe they size themselves, so this
+   only needs to reserve space rather than style the field. */
+.payment-element iframe {
+  display: block;
+}
+
+#square-card {
+  padding: 0.2rem 0;
+}
+
+#donorbox-embed iframe {
+  display: block;
+  max-width: 500px;
+  margin: 0 auto;
+  border: 0;
+}
+
+.copyable dd {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.copy-button {
+  flex: none;
+  padding: 0.25rem 0.6rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.copy-button:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.copy-button:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+.copy-button.is-copied {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+.segmented input:disabled + span {
+  color: var(--ink-faint);
+  cursor: not-allowed;
 }
