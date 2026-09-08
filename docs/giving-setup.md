@@ -279,6 +279,43 @@ confirmed on
 which is worse than Stripe — so the charity application is the thing that makes this option
 attractive, and should be started early since it needs registration documents.
 
+#### Would this parish actually get the charity rate?
+
+Probably, and the paperwork is likely already in hand — but it is discretionary, so treat it as an
+application rather than a formality. PayPal does not publish an approval rate, so nobody should
+promise the 1.99% before it is granted.
+
+Two things usually decide it. First, churches are automatically tax-exempt under
+[IRS rules for churches](https://www.irs.gov/charities-non-profits/churches-integrated-auxiliaries-and-conventions-or-associations-of-churches):
+they are treated as 501(c)(3) without applying, and are not required to file for a determination
+letter. That is normally a _problem_ for a church at this step, because it means many congregations
+have no determination letter to show and do not appear in the IRS Business Master File, while PayPal
+asks for "proof of business registration".
+
+Second, and decisively here, **that gap does not apply to us.** Saint Elizabeth is a parish of the
+Orthodox Church in America, and the OCA holds a group federal exemption covering its parishes. From
+the OCA's own [Tax Help for Parish Treasurers](https://www.oca.org/files/PDF/TaxHelp/TaxHelp.pdf):
+
+> Parishes of the Orthodox Church in America are eligible to be included under the church's group
+> federal income tax exemption and do not need to seek a separate determination of tax-exempt status
+> from the Internal Revenue Service.
+
+So the documentation route is to confirm the parish is on the OCA's annual group-exemption list and
+ask the Chancery Finance Office (516-922-0550) for a subordinate-organization letter, rather than
+filing a Form 1023 that a church does not otherwise need. Alongside the Washington non-profit
+corporation registration and the parish EIN, that is the "legally registered with the appropriate
+regulatory body" evidence PayPal asks for.
+
+One distinction worth not tripping over: **PayPal Giving Fund is a different programme** from the
+charity rate. It relies on Candid/GuideStar and the IRS Business Master File, which is exactly where
+churches without their own determination letter do get stuck. The charity _rate_ (PPCC) is the one
+that matters for this page.
+
+**Practical consequence for the decision:** because the rate is not guaranteed and takes time,
+PayPal should not be chosen _on the strength of_ 1.99%. At its unapproved rate of 2.89% + $0.49 it
+is the most expensive card option here. Either apply first and decide afterwards, or pick Square or
+Stripe on their merits and treat a later PayPal approval as a bonus.
+
 Two real drawbacks. Recurring must be switched on **when the button is created** on PayPal's site;
 it is not an SDK parameter, so changing it later means making a new button. And donors without a
 PayPal account can pay by card in the popup but face an extra step, which costs some completion rate
