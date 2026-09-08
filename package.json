@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Website for Saint Elizabeth Orthodox Church, Poulsbo, Washington.",
   "scripts": {
-    "start": "eleventy --config=eleventy.config.ts --serve --quiet",
-    "build": "eleventy --config=eleventy.config.ts",
+    "start": "npm run build:scripts && eleventy --config=eleventy.config.ts --serve --quiet",
+    "build": "eleventy --config=eleventy.config.ts && npm run build:scripts",
+    "build:scripts": "tsc --project tsconfig.client.json",
+    "watch:scripts": "tsc --project tsconfig.client.json --watch --preserveWatchOutput",
     "clean": "rm -rf _site",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --project tsconfig.client.json --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

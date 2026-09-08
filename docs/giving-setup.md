@@ -1,11 +1,47 @@
 # Online Giving Setup
 
-> **Status: the Giving page is not published.** The page is written and ready, but it is excluded
-> from the build via `.eleventyignore` until the parish decides to launch online giving. Follow
-> [Publishing the page](#publishing-the-page) at the end of this document to switch it on.
+> **Status: preview only.** The Giving page is built and reachable at `/giving/`, but it is kept out
+> of the main navigation and **takes no payments**. It currently renders an interactive _mock_ of
+> the checkout so the parish council can review the donor experience before committing to a
+> provider. Follow [Publishing the page](#publishing-the-page) to launch it for real.
 
-The Giving page is driven entirely by `src/_data/giving.json`. Until that file is filled in, the
-page shows the fund descriptions with "Coming soon" buttons and a notice for administrators.
+The Giving page is driven entirely by `src/_data/giving.json`, which supports three states:
+
+| `configured` | `demo.enabled` | What the page shows                                 |
+| ------------ | -------------- | --------------------------------------------------- |
+| `true`       | ignored        | Real Stripe Payment Link buttons, one per fund      |
+| `false`      | `true`         | The interactive mock checkout (**current setting**) |
+| `false`      | `false`        | Fund descriptions and an administrator notice       |
+
+## The mock checkout
+
+The mock lives in `src/scripts/giving.ts` and is compiled to `_site/assets/js/giving.js` by
+`npm run build:scripts` (wired into `task build`). It exists to answer design questions — how many
+funds, what suggested amounts, whether to offer fee coverage — without setting up billing first.
+
+What is real:
+
+- The card field is a genuine **Stripe.js v3 card Element**, served from `js.stripe.com` and
+  rendered inside Stripe's own iframe, so card numbers never touch this site.
+- Card validation (number, expiry, CVC, postal code) is Stripe's, not ours.
+- Amount selection, fund switching, monthly-vs-one-time rules, and the fee gross-up are real logic.
+
+What is **not** real:
+
+- **No payment is taken and no card is ever submitted.** The script deliberately never calls
+  `stripe.createPaymentMethod()`; on submit it waits and then renders a mock receipt.
+- The `demo.publishableKey` in `giving.json` is Stripe's sample **test** key from their public
+  documentation, not a parish key. Publishable keys are designed to be public and cannot move money.
+
+To test the flow, use Stripe's test card `4242 4242 4242 4242` with any future expiry and any CVC.
+
+To hide the mock, set `demo.enabled` to `false` in `src/_data/giving.json`.
+
+### Why a static site cannot take real payments on its own
+
+Elements can collect and tokenize a card in the browser, but _charging_ it requires creating a
+PaymentIntent server-side with the parish's **secret** key. A static site has no server, which is
+exactly why the recommendation below is Payment Links: Stripe hosts the part that needs the secret.
 
 We use **Stripe Payment Links**. This approach was chosen deliberately:
 
@@ -103,7 +139,8 @@ and Stripe's per-transaction processing, which any provider charges.
 
 The Giving page is deliberately unpublished. When the parish is ready to launch, do all four steps:
 
-1. **Include the page in the build.** Delete the `src/giving.njk` line from `.eleventyignore`.
+1. **Turn off the mock.** In `src/_data/giving.json`, set `demo.enabled` to `false` and `configured`
+   to `true`. The page then renders the real Payment Link buttons instead.
 2. **Add it to the menu.** Add this entry back to `src/_data/navigation.json`, after Resources:
    ```json
    { "title": "Giving", "url": "/giving/" }
@@ -118,4 +155,5 @@ The Giving page is deliberately unpublished. When the parish is ready to launch,
    (`src/404.njk`), and the Charity page (`src/what-we-do/charity.md`) all had "Give online" links
    removed. Add them back where they help.
 
-Then run `task build` and confirm `_site/giving/index.html` exists.
+Then run `task build` and confirm `_site/giving/index.html` shows the live buttons rather than the
+preview notice.

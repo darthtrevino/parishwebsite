@@ -47,5 +47,10 @@
     {% include "partials/header.njk" %}
     <main id="main">{{ content | safe }}</main>
     {% include "partials/footer.njk" %}
+    {% if pageScripts %}
+      {% for script in pageScripts %}
+        <script src="{{ script }}" defer></script>
+      {% endfor %}
+    {% endif %}
   </body>
 </html>

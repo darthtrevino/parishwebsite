@@ -53,10 +53,16 @@ tasks:
       - npm run format:check
 
   lint:types:
-    desc: Type-check the Eleventy configuration.
+    desc: Type-check the Eleventy configuration and the browser scripts.
     deps: [install]
     cmds:
       - npm run typecheck
+
+  watch:scripts:
+    desc: Recompile the browser scripts on change, alongside `task serve`.
+    deps: [install]
+    cmds:
+      - npm run watch:scripts
 
   format:
     desc: Rewrite files to match the Prettier formatting rules.

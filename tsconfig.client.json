@@ -1,0 +1,19 @@
+{
+  "//": "Browser-side scripts. Kept separate from the root config because those are Node/Eleventy build files (ES2022 + node types, never emitted) while these are ES2020 + DOM and do emit into _site.",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": [],
+    "rootDir": "src/scripts",
+    "outDir": "_site/assets/js",
+    "strict": true,
+    "noEmit": false,
+    "removeComments": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/scripts/**/*.ts", "types/stripe-js.d.ts"],
+  "exclude": ["node_modules", "_site"]
+}

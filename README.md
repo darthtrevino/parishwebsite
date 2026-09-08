@@ -44,6 +44,7 @@ src/
   _data/           site.json, navigation.json, giving.json, calendar.ts
   _includes/       layouts and partials
   assets/          css and images (copied to /assets)
+  scripts/         browser TypeScript, compiled to /assets/js
   static/          robots.txt and _redirects (copied to the site root)
   who-we-are/      Our Faith, Parish, Saint, Stories, Clergy, Location
   what-we-do/      Worship, Charity, Evangelization
@@ -51,7 +52,7 @@ src/
   resources/       Bookstore, Lending Library, Chant, Streaming, Dates
   news/            one Markdown file per post
   index.njk        homepage
-  giving.njk       giving page (unpublished, see .eleventyignore)
+  giving.njk       giving page (preview only — takes no payments)
 eleventy.config.ts
 ```
 
@@ -63,6 +64,8 @@ the parish Google Calendar at build time by `src/_data/calendar.ts`.
 
 - All logic is TypeScript. `task lint` must pass.
 - **No secrets in this repository.** Online giving uses Stripe Payment Links, which are public URLs.
-  A Stripe secret key must never be committed; see `docs/giving-setup.md`.
+  A Stripe secret key must never be committed; see `docs/giving-setup.md`. The Giving page currently
+  renders an interactive _mock_ of the checkout — the card field is a real Stripe element, but no
+  payment is taken and nothing is sent to Stripe.
 - Old Squarespace URLs are preserved as 301 redirects in `src/static/_redirects`. Add an entry there
   whenever a page moves.

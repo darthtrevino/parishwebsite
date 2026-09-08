@@ -3,6 +3,17 @@
   "configured": false,
   "note": "Replace each `url` below with a Stripe Payment Link from the parish Stripe dashboard, then set `configured` to true. Payment Links are public URLs — never place a Stripe secret key (sk_live_… / sk_test_…) in this repository.",
   "publishableKey": "",
+  "demo": {
+    "enabled": true,
+    "note": "Renders an interactive mock of the checkout so the parish can review the donor experience before committing to a payment provider. No card is ever charged and the Stripe API is never called. `publishableKey` is Stripe's own sample TEST key from their public documentation; publishable keys are designed to be readable by anyone and cannot move money. Set `enabled` to false to hide the mock.",
+    "publishableKey": "pk_test_TYooMQauvdEDq54NiTphI7jx"
+  },
+  "fee": {
+    "note": "Stripe's US nonprofit rate, used to calculate the optional 'cover processing costs' amount. `fixed` is in cents; `fixedLabel` is the same value formatted for display. Confirm the parish's actual rate before going live.",
+    "percent": 2.2,
+    "fixed": 30,
+    "fixedLabel": "0.30"
+  },
   "funds": [
     {
       "id": "tithe",

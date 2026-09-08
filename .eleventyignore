@@ -1,5 +1,7 @@
-# The giving page is written and ready, but stays unpublished until the parish
-# decides to launch online giving. To publish it, delete the line below, re-add
-# the Giving entry to src/_data/navigation.json, and repoint the /store redirect
-# in src/static/_redirects. See docs/giving-setup.md.
-src/giving.njk
+# Nothing is currently withheld from the build.
+#
+# The Giving page (src/giving.njk) is published but deliberately left out of the
+# main navigation until the parish decides to launch online giving. It currently
+# renders an interactive mock of the checkout — no payment is taken. To launch:
+# add the Giving entry back to src/_data/navigation.json, repoint the /store
+# redirect in src/static/_redirects, and follow docs/giving-setup.md.

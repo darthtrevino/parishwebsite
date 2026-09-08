@@ -4,6 +4,9 @@ title: Giving
 description: Support the ministry of Saint Elizabeth Orthodox Church through online tithes, offerings, and gifts.
 permalink: /giving/
 banner: /assets/img/photos/cross-meadow.jpg
+pageScripts:
+  - https://js.stripe.com/v3/
+  - /assets/js/giving.js
 ---
 
 <article class="page">
@@ -19,40 +22,177 @@ banner: /assets/img/photos/cross-meadow.jpg
       or by mail.
     </p>
 
-    {% if not giving.configured %}
+    {% if giving.configured %}
+
+      <div class="grid wide" style="margin: 2.5rem 0;">
+        {% for fund in giving.funds %}
+          <div class="card">
+            <h3>{{ fund.title }}</h3>
+            <p>{{ fund.description }}</p>
+            {% if fund.suggestedAmounts %}
+              <ul class="amounts">
+                {% for amount in fund.suggestedAmounts %}
+                  <li>${{ amount }}</li>
+                {% endfor %}
+                <li>Other</li>
+              </ul>
+            {% endif %}
+            {% if fund.url %}
+              <p>
+                <a class="button" href="{{ fund.url }}" rel="noopener">
+                  {% if fund.recurring %}Give monthly{% else %}Give now{% endif %}
+                </a>
+              </p>
+            {% else %}
+              <p><span class="button" aria-disabled="true">Coming soon</span></p>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+
+    {% elif giving.demo.enabled %}
+
+      <div class="notice notice-demo">
+        <strong>Preview only — no payment is taken.</strong>
+        This is a working mock of the online giving experience, built so the parish council can review
+        the flow before choosing a payment provider. The card field is a genuine Stripe element, but
+        nothing is submitted to Stripe and no card is charged. Please use the offering plate or mail a
+        check in the meantime.
+      </div>
+
+      {% set demoConfig = { demo: true, publishableKey: giving.demo.publishableKey, fee: giving.fee, funds: giving.funds } %}
+      <script type="application/json" id="giving-config">
+        {{ demoConfig | dump | safe }}
+      </script>
+
+      <form class="giving-form" id="giving-form" novalidate hidden>
+        <fieldset class="field-group">
+          <legend>Choose a fund</legend>
+          <div class="fund-options">
+            {% for fund in giving.funds %}
+              <label class="fund-option">
+                <input
+                  type="radio"
+                  name="fund"
+                  value="{{ fund.id }}"
+                  {% if loop.first %}checked{% endif %}
+                />
+                <span class="fund-option-body">
+                  <span class="fund-option-title">{{ fund.title }}</span>
+                  <span class="fund-option-text">{{ fund.description }}</span>
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <fieldset class="field-group" id="frequency-fields">
+          <legend>How often</legend>
+          <div class="segmented">
+            <label>
+              <input type="radio" name="frequency" id="frequency-once" value="once" checked />
+              <span>One-time</span>
+            </label>
+            <label>
+              <input type="radio" name="frequency" id="frequency-monthly" value="monthly" />
+              <span>Monthly</span>
+            </label>
+          </div>
+          <span class="field-note" id="monthly-note" aria-live="polite"></span>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend>Amount</legend>
+          <div class="amount-options" id="amount-options"></div>
+          <label class="field" for="custom-amount">
+            <span class="field-label">Other amount</span>
+            <span class="amount-input">
+              <span aria-hidden="true">$</span>
+              <input
+                type="number"
+                id="custom-amount"
+                name="custom-amount"
+                inputmode="decimal"
+                min="1"
+                step="0.01"
+                placeholder="0.00"
+              />
+            </span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" id="cover-fees" name="cover-fees" />
+            <span>
+              Add {{ giving.fee.percent }}% + ${{ giving.fee.fixedLabel }} so the parish receives my
+              full gift<span id="cover-fees-amount"></span>
+            </span>
+          </label>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend>Your details</legend>
+          <label class="field" for="donor-name">
+            <span class="field-label">Name <span class="field-optional">(optional)</span></span>
+            <input type="text" id="donor-name" name="donor-name" autocomplete="name" />
+          </label>
+          <label class="field" for="donor-email">
+            <span class="field-label">Email for your receipt</span>
+            <input
+              type="email"
+              id="donor-email"
+              name="donor-email"
+              autocomplete="email"
+              required
+            />
+          </label>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend>Card</legend>
+          <div id="card-element" class="card-element"></div>
+          <p class="field-error" id="card-errors" role="alert" hidden></p>
+          <p class="field-note">
+            Card details are entered directly into Stripe and never reach this website. In this
+            preview they are validated but never submitted — test with <code>4242 4242 4242 4242</code>,
+            any future expiry, and any CVC.
+          </p>
+        </fieldset>
+
+        <p class="giving-summary" id="giving-summary" aria-live="polite"></p>
+        <p class="field-error" id="form-error" role="alert" hidden></p>
+        <button type="submit" class="button" id="giving-submit">
+          <span id="giving-submit-label">Give</span>
+        </button>
+      </form>
+
+      <div class="giving-receipt" id="giving-receipt" role="status" hidden>
+        <h2>Thank you — this was a preview</h2>
+        <p>
+          In a live setting you would now receive an emailed receipt and the gift would appear in the
+          parish's Stripe dashboard. <strong>No payment was taken and no card was submitted.</strong>
+        </p>
+        <div id="giving-receipt-body"></div>
+        <p>
+          <button type="button" class="button ghost" id="giving-restart">Try again</button>
+        </p>
+      </div>
+
+      <noscript>
+        <div class="notice">
+          The online giving preview needs JavaScript. Gifts may still be made in person or by mail —
+          see below.
+        </div>
+      </noscript>
+
+    {% else %}
+
       <div class="notice">
         <strong>Online giving is not yet live.</strong>
         The parish administrator needs to create Stripe Payment Links and add them to
         <code>src/_data/giving.json</code>. See <code>docs/giving-setup.md</code> for step-by-step
-        instructions. Until then, the funds below are shown without payment buttons.
+        instructions.
       </div>
-    {% endif %}
 
-    <div class="grid wide" style="margin: 2.5rem 0;">
-      {% for fund in giving.funds %}
-        <div class="card">
-          <h3>{{ fund.title }}</h3>
-          <p>{{ fund.description }}</p>
-          {% if fund.suggestedAmounts %}
-            <ul class="amounts">
-              {% for amount in fund.suggestedAmounts %}
-                <li>${{ amount }}</li>
-              {% endfor %}
-              <li>Other</li>
-            </ul>
-          {% endif %}
-          {% if giving.configured and fund.url %}
-            <p>
-              <a class="button" href="{{ fund.url }}" rel="noopener">
-                {% if fund.recurring %}Give monthly{% else %}Give now{% endif %}
-              </a>
-            </p>
-          {% else %}
-            <p><span class="button" aria-disabled="true">Coming soon</span></p>
-          {% endif %}
-        </div>
-      {% endfor %}
-    </div>
+    {% endif %}
 
     <h2>Other ways to give</h2>
 

@@ -10,7 +10,7 @@ directly in GitHub's web editor.
 | Address, phone, email, service times, social links | `src/_data/site.json`                         |
 | Menu structure                                     | `src/_data/navigation.json`                   |
 | Feasts, fasts, and events calendar                 | the parish Google Calendar (see below)        |
-| Online giving funds and Stripe links               | `src/_data/giving.json` (page unpublished)    |
+| Online giving funds and Stripe links               | `src/_data/giving.json` (preview only)        |
 | A regular page (e.g. Our Parish)                   | `src/who-we-are/our-parish.md` and neighbours |
 | The homepage                                       | `src/index.njk`                               |
 | News posts                                         | `src/news/*.md`                               |

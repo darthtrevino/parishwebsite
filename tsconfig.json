@@ -15,5 +15,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["eleventy.config.ts", "src/**/*.ts", "types/**/*.d.ts"],
-  "exclude": ["node_modules", "_site"]
+  "exclude": ["node_modules", "_site", "src/scripts"]
 }
