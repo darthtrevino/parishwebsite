@@ -1,6 +1,7 @@
 node_modules/
 _site/
 .cache/
+.task/
 .env
 .env.*
 !.env.example
