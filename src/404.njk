@@ -3,19 +3,14 @@ layout: layouts/base.njk
 title: Page Not Found
 permalink: /404.html
 eleventyExcludeFromCollections: true
+banner: /assets/img/photos/winter-trees.jpg
 ---
 
 <article class="page">
-  <header class="page-header">
-    <div class="wrap">
-      <p class="eyebrow">Error 404</p>
-      <h1>We could not find that page</h1>
-      <p class="lede">
-        The page you were looking for may have moved when we rebuilt this website. Please try one of
-        the links below, or contact us and we will help you find it.
-      </p>
-    </div>
-  </header>
+  {% set hdrEyebrow = "Error 404" %}
+  {% set hdrTitle = "We could not find that page" %}
+  {% set hdrLede = "The page you were looking for may have moved when we rebuilt this website. Please try one of the links below, or contact us and we will help you find it." %}
+  {% include "partials/page-header.njk" %}
 
   <div class="wrap prose">
     <ul>

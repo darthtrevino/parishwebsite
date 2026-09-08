@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/banner-worship.jpg
 title: Worship
 lede:
   Orthodoxy simply and literally means "true worship." In a real sense, worship is the central

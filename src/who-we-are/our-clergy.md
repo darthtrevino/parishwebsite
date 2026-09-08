@@ -1,10 +1,13 @@
 ---
+banner: /assets/img/photos/banner-our-clergy.jpg
 title: Our Clergy
 lede:
   Our parish is served by clergy appointed by our bishop, in a line of succession stretching back
   twenty centuries to the Holy Apostles.
 description: The clergy of Saint Elizabeth Orthodox Church in Poulsbo, Washington.
 ---
+
+<img class="portrait" src="/assets/img/photos/bishop-vasily.jpg" alt="His Grace Bishop Vasily of Portland" />
 
 Saint Elizabeth Church is under the local administration of **{{ site.jurisdiction.bishop }}** of
 the {{ site.jurisdiction.diocese }} within the [Orthodox Church in
@@ -13,6 +16,8 @@ New Testament) that stretches back twenty centuries to the Holy Apostles themsel
 **{{ site.rector }}**&mdash;"Father John"&mdash;is the appointed rector of the parish.
 
 ## Archpriest John Strickland, Rector
+
+<img class="portrait" src="/assets/img/photos/rector-serving.jpg" alt="Archpriest John Strickland" />
 
 Father John grew up in Orange County, California, of Episcopalian background. Falling in love with
 Russian history while an undergraduate, he embarked on a career of historical study that resulted in
@@ -26,6 +31,8 @@ faith. You can reach him at [{{ site.phone }}](tel:{{ site.phoneHref }}) or
 [{{ site.email }}](mailto:{{ site.email }}).
 
 ## Subdeacon Gregory Hendry
+
+<img class="portrait" src="/assets/img/photos/subdeacon-gregory-hendry.jpg" alt="Subdeacon Gregory Hendry" />
 
 ## Reader Vladimir (Bradford) Lawson
 

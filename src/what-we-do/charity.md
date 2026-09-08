@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/prosphora.jpg
 title: Charity
 lede: >-
   "Works of mercy, patience, and love" — the pattern our patron saint set for us.

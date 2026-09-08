@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/icon-stand.jpg
 title: Our Stories
 lede: A great way to learn about Saint Elizabeth Church is to hear from the people who make it up.
 description: Interviews and stories from the parishioners of Saint Elizabeth Orthodox Church.

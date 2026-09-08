@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/banner-our-parish.jpg
 title: Our Parish
 lede:
   Saint Elizabeth Orthodox Church exists for the salvation of her members and the world around them.

@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/bookstore.jpg
 title: Bookstore
 lede:
   A well-stocked parish bookstore with works on Church history, liturgics, theology, the lives of

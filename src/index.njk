@@ -5,53 +5,43 @@ description: A vibrant Orthodox Christian parish on the Kitsap Peninsula in Wash
 permalink: /
 ---
 
-<section class="hero">
+<section class="hero" style="--banner: url('/assets/img/photos/church-front.jpg')">
   <div class="wrap">
-    <p class="eyebrow">Orthodox Church in America &middot; Poulsbo, Washington</p>
-    <h1>Come and see.</h1>
-    <p class="lede">
-      We are a vibrant Orthodox Christian parish on the Kitsap Peninsula, just north of Poulsbo,
-      keeping the faith of the Apostles in worship, charity, and fellowship.
-    </p>
-    <div class="hero-actions">
-      <a class="button" href="/come-and-see/visiting/">Plan your visit</a>
-      <a class="button ghost" href="/what-we-do/worship/">Service times</a>
+    <p class="hero-tagline">Orthodox Church in America &middot; Poulsbo, Washington</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <h2 class="section-title">Welcome!</h2>
+        <p>
+          We are delighted that you found our website. We hope you enjoy reading through it and sampling
+          some of our homilies, talks, and music.
+        </p>
+        <p>
+          If you have questions about our parish&mdash;or would like to speak to a priest&mdash;our rector
+          {{ site.rector }} is available at all times to do so. You can reach him at
+          <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a> or
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
+        </p>
+      </div>
+      <div>
+        <h2 class="section-title">Join Us!</h2>
+        {% include "partials/service-times.njk" %}
+        <p class="small">
+          This schedule changes during certain seasons of the church year.
+          See our <a href="/resources/dates-and-events/">calendar of feasts and fasts</a>.
+        </p>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <h2 class="section-title">Join Us in Worship</h2>
-    {% include "partials/service-times.njk" %}
-    <p style="text-align: center; margin-top: 2rem;">
-      This schedule changes during certain seasons of the church year.
-      See our <a href="/resources/dates-and-events/">calendar of feasts and fasts</a>.
-    </p>
-  </div>
-</section>
-
-<section class="section alt">
-  <div class="wrap">
-    <h2 class="section-title">A Word of Welcome</h2>
-    <div class="prose" style="margin-inline: auto; padding-bottom: 0;">
-      <p>
-        We are delighted that you found our website. We hope you enjoy reading through it and sampling
-        some of our homilies, talks, and music.
-      </p>
-      <p>
-        If you have questions about our parish&mdash;or would like to speak to a priest&mdash;our rector
-        {{ site.rector }} is available at all times to do so. You can reach him at
-        <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a> or
-        <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
-      </p>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <h2 class="section-title">Where to Begin</h2>
+    <h2 class="section-title">Becoming Orthodox</h2>
     <div class="grid">
       <div class="card">
         <h3>New to Orthodoxy?</h3>
@@ -90,9 +80,9 @@ permalink: /
 </section>
 
 {% set upcoming = feasts.dates | limit(6) %}
-<section class="section alt">
+<section class="section">
   <div class="wrap">
-    <h2 class="section-title">The Church Year Ahead</h2>
+    <h2 class="section-title">Parish Calendar</h2>
     <ul class="calendar">
       {% for item in upcoming %}
         <li>
@@ -124,7 +114,7 @@ permalink: /
 </section>
 {% endif %}
 
-<section class="section alt">
+<section class="section">
   <div class="wrap">
     <h2 class="section-title">Directions</h2>
     <div class="prose" style="margin-inline: auto;">

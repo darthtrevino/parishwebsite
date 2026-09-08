@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/icon-communion.jpg
 title: Becoming Orthodox
 lede:
   We believe every human being has been called to membership in the body of Christ, the Orthodox

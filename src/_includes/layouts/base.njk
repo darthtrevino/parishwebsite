@@ -6,8 +6,12 @@
     <title>{% if title %}{{ title }} · {{ site.shortTitle }}{% else %}{{ site.title }}{% endif %}</title>
     <meta name="description" content="{{ description or site.description }}" />
     <link rel="canonical" href="{{ page.url | absoluteUrl }}" />
-    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/assets/img/photos/favicon-source.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/assets/img/photos/favicon-source.png" />
     <link rel="alternate" type="application/atom+xml" title="{{ site.title }} News" href="/news/feed.xml" />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/eb-garamond-normal-latin.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/fonts/montserrat-normal-latin.woff2" crossorigin />
+    <link rel="stylesheet" href="/assets/css/fonts.css" />
     <link rel="stylesheet" href="/assets/css/style.css" />
 
     <meta property="og:type" content="{{ ogType or 'website' }}" />
@@ -37,7 +41,7 @@
       }
     </script>
   </head>
-  <body>
+  <body class="{% if page.url == '/' %}is-home{% endif %}">
     <a class="skip-link" href="#main">Skip to content</a>
     {% include "partials/header.njk" %}
     <main id="main">{{ content | safe }}</main>

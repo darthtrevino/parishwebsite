@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/cross-meadow.jpg
 title: Our Location
 lede:
   The doctrine of the incarnation shapes our relationship to the land, the water, and the community

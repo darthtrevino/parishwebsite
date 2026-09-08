@@ -1,0 +1,17 @@
+{#
+  Banner header shown at the top of every page. The site header is overlaid on
+  top of it, so this must be the first element inside <main>.
+
+  Callers set `hdrEyebrow`, `hdrTitle` and `hdrLede` with {% set %} before
+  including this partial. `banner` comes from front matter or directory data.
+#}
+<header
+  class="page-header"
+  style="--banner: url('{{ banner | default('/assets/img/photos/church-interior.jpg', true) }}')"
+>
+  <div class="wrap">
+    {% if hdrEyebrow %}<p class="eyebrow">{{ hdrEyebrow | safe }}</p>{% endif %}
+    <h1>{{ hdrTitle }}</h1>
+    {% if hdrLede %}<p class="lede">{{ hdrLede | safe }}</p>{% endif %}
+  </div>
+</header>

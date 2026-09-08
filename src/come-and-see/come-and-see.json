@@ -1,1 +1,5 @@
-{ "layout": "layouts/page.njk", "eyebrow": "Come and See" }
+{
+  "layout": "layouts/page.njk",
+  "eyebrow": "Come and See",
+  "banner": "/assets/img/photos/banner-visit.jpg"
+}

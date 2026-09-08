@@ -4,16 +4,14 @@ title: News
 description: Parish news, announcements, and reflections from Saint Elizabeth Orthodox Church in Poulsbo, Washington.
 permalink: /news/
 eleventyExcludeFromCollections: true
+banner: /assets/img/photos/clergy-serving.jpg
 ---
 
 <article class="page">
-  <header class="page-header">
-    <div class="wrap">
-      <p class="eyebrow">Parish</p>
-      <h1>News</h1>
-      <p class="lede">Announcements, reflections, and reports from the life of our parish.</p>
-    </div>
-  </header>
+  {% set hdrEyebrow = "Parish" %}
+  {% set hdrTitle = "News" %}
+  {% set hdrLede = "Announcements, reflections, and reports from the life of our parish." %}
+  {% include "partials/page-header.njk" %}
 
   <div class="wrap prose">
     {% if collections.news.length %}

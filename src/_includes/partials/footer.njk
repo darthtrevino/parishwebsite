@@ -34,9 +34,12 @@
   </div>
 
   <div class="wrap footer-base">
-    <p>
-      A parish of the <a href="{{ site.jurisdiction.url }}" rel="noopener">{{ site.jurisdiction.name }}</a>,
-      {{ site.jurisdiction.diocese }}.
+    <p class="footer-jurisdiction">
+      <img class="footer-logo" src="/assets/img/photos/oca-logo.png" alt="" width="44" height="44" />
+      <span>
+        A parish of the <a href="{{ site.jurisdiction.url }}" rel="noopener">{{ site.jurisdiction.name }}</a>,
+        {{ site.jurisdiction.diocese }}.
+      </span>
     </p>
     <p>&copy; {% year %} {{ site.title }}</p>
   </div>

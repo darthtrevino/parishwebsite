@@ -1,1 +1,5 @@
-{ "layout": "layouts/page.njk", "eyebrow": "What We Do" }
+{
+  "layout": "layouts/page.njk",
+  "eyebrow": "What We Do",
+  "banner": "/assets/img/photos/banner-worship.jpg"
+}

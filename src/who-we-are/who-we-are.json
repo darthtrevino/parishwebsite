@@ -1,1 +1,5 @@
-{ "layout": "layouts/page.njk", "eyebrow": "Who We Are" }
+{
+  "layout": "layouts/page.njk",
+  "eyebrow": "Who We Are",
+  "banner": "/assets/img/photos/banner-our-parish.jpg"
+}

@@ -3,20 +3,14 @@ layout: layouts/base.njk
 title: Giving
 description: Support the ministry of Saint Elizabeth Orthodox Church through online tithes, offerings, and gifts.
 permalink: /giving/
+banner: /assets/img/photos/cross-meadow.jpg
 ---
 
 <article class="page">
-  <header class="page-header">
-    <div class="wrap">
-      <p class="eyebrow">Stewardship</p>
-      <h1>Giving</h1>
-      <p class="lede">
-        "As a sacrifice to God, thou didst arm thyself with works of mercy, patience, and love."
-        Our patron gave away the wealth of a princess. Our own offerings, however modest, share in that
-        same sacrifice.
-      </p>
-    </div>
-  </header>
+  {% set hdrEyebrow = "Stewardship" %}
+  {% set hdrTitle = "Giving" %}
+  {% set hdrLede %}"As a sacrifice to God, thou didst arm thyself with works of mercy, patience, and love." Our patron gave away the wealth of a princess. Our own offerings, however modest, share in that same sacrifice.{% endset %}
+  {% include "partials/page-header.njk" %}
 
   <div class="wrap prose">
     <p>

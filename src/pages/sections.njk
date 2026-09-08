@@ -11,12 +11,10 @@ eleventyExcludeFromCollections: true
 ---
 
 <article class="page">
-  <header class="page-header">
-    <div class="wrap">
-      <p class="eyebrow">Saint Elizabeth Orthodox Church</p>
-      <h1>{{ section.title }}</h1>
-    </div>
-  </header>
+  {% set hdrEyebrow = "Saint Elizabeth Orthodox Church" %}
+  {% set hdrTitle = section.title %}
+  {% set banner = section.banner %}
+  {% include "partials/page-header.njk" %}
 
   <div class="wrap" style="padding: 3rem 0 4rem;">
     <div class="grid">

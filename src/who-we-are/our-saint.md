@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/banner-our-saint.jpg
 title: Our Saint
 lede:
   Holy New Martyr Elizabeth of Russia (1864–1918), a German princess who gave away her wealth,
@@ -6,6 +7,8 @@ lede:
 description:
   The life of Holy New Martyr Grand Duchess Elizabeth of Russia, patron saint of our parish.
 ---
+
+<img class="portrait" src="/assets/img/photos/icon-saint-elizabeth.png" alt="Grand Duchess Elizabeth Feodorovna in a formal portrait, c. 1890" />
 
 Holy New Martyr Elizabeth of Russia was a German princess raised in the Protestant faith but who
 later, after marrying into the Russian royal family and encountering the faith of her new land,
@@ -35,6 +38,11 @@ the collapse of Communism in Russia. Her story is remembered by many Christians 
 world. In 1998 the Church of England placed a statue of her above the western entrance to
 Westminster Abbey in London, and her icon is widely venerated by other non-Orthodox communities to
 this day.
+
+<figure>
+<img src="/assets/img/photos/martha-mary-convent.png" alt="The Martha-Mary Convent in Moscow, founded by Saint Elizabeth" />
+<figcaption>The Martha-Mary Convent in Moscow, founded by Saint Elizabeth.</figcaption>
+</figure>
 
 We celebrate her feast day each year on **July 18**.
 

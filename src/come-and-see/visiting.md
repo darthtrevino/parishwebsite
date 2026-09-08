@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/banner-visit.jpg
 title: Visiting
 lede:
   Our parish warmly invites you to join us for services, classes, and events. We consider

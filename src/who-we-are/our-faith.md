@@ -1,4 +1,5 @@
 ---
+banner: /assets/img/photos/banner-our-faith.jpg
 title: Our Faith
 lede:
   Orthodox Christianity is the faith of the Apostles, handed down in an unbroken and unaltered
