@@ -1428,3 +1428,214 @@ a.card:hover {
     text-align: center;
   }
 }
+
+/* --------------------------------------------------- giving: provider picker */
+
+.provider-picker {
+  margin: 2.5rem 0 3rem;
+  font-family: var(--sans);
+}
+
+.provider-picker-title {
+  margin-bottom: 0.4rem;
+}
+
+.provider-picker-lede {
+  margin: 0 0 1.5rem;
+  color: var(--ink-faint);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.provider-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.provider-tab {
+  flex: 1 1 8rem;
+  padding: 0.8rem 1rem;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+  font-family: var(--sans);
+  text-align: left;
+  cursor: pointer;
+}
+
+.provider-tab:hover {
+  border-color: var(--teal);
+}
+
+.provider-tab:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+.provider-tab[aria-selected="true"] {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
+.provider-tab-name {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.provider-tab-fee {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.72rem;
+  opacity: 0.75;
+}
+
+.provider-panel[hidden] {
+  display: none;
+}
+
+.provider-panel:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 4px;
+}
+
+.provider-tagline {
+  margin: 0 0 1.5rem;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.05em;
+  line-height: 1.5;
+}
+
+.provider-specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1px;
+  margin: 0 0 1.5rem;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.provider-spec {
+  padding: 0.9rem 1rem;
+  background: #fff;
+  border-left: 3px solid transparent;
+}
+
+.provider-spec dt {
+  color: var(--ink-faint);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.provider-spec dd {
+  margin: 0.3rem 0 0;
+  color: var(--ink);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.provider-spec.is-yes {
+  border-left-color: #2f6b45;
+}
+
+.provider-spec.is-no {
+  border-left-color: #a5203a;
+}
+
+.provider-spec.is-partial {
+  border-left-color: #b8860b;
+}
+
+.provider-spec.is-info {
+  border-left-color: var(--rule);
+}
+
+.provider-caveats {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.provider-caveats li + li {
+  margin-top: 0.5rem;
+}
+
+.giving-form-title {
+  margin-bottom: 0;
+}
+
+.card-element.is-placeholder {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: #fafafa;
+  color: var(--ink-faint);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+}
+
+.placeholder-brand {
+  width: 1.9rem;
+  height: 1.2rem;
+  background: var(--rule);
+  border-radius: 2px;
+}
+
+.placeholder-text {
+  flex: 1;
+}
+
+.embed-placeholder {
+  padding: 1.5rem;
+  background: var(--band);
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.embed-placeholder p {
+  margin: 0 0 0.8rem;
+}
+
+.embed-placeholder p:last-child {
+  margin-bottom: 0;
+}
+
+.zelle-instructions {
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.zelle-instructions > p:first-child {
+  margin-top: 0;
+}
+
+.zelle-instructions .receipt-list {
+  margin: 1.2rem 0;
+}
+
+#giving-submit[hidden],
+#cover-fees-field[hidden],
+[data-payment][hidden] {
+  display: none;
+}
+
+@media (width <= 40rem) {
+  .provider-tab {
+    flex-basis: 100%;
+  }
+}

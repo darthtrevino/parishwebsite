@@ -55,15 +55,76 @@ pageScripts:
       <div class="notice notice-demo">
         <strong>Preview only — no payment is taken.</strong>
         This is a working mock of the online giving experience, built so the parish council can review
-        the flow before choosing a payment provider. The card field is a genuine Stripe element, but
-        nothing is submitted to Stripe and no card is charged. Please use the offering plate or mail a
-        check in the meantime.
+        the flow and compare providers before choosing one. Switch providers below to see how the
+        donor experience and the fees change. Nothing is submitted to any payment system and no card
+        is charged. Please use the offering plate or mail a check in the meantime.
       </div>
 
-      {% set demoConfig = { demo: true, publishableKey: giving.demo.publishableKey, fee: giving.fee, funds: giving.funds } %}
+      {% set demoConfig = { demo: true, publishableKey: giving.demo.publishableKey, defaultProvider: giving.demo.defaultProvider, zelle: giving.zelle, providers: giving.providers, funds: giving.funds } %}
       <script type="application/json" id="giving-config">
         {{ demoConfig | dump | safe }}
       </script>
+
+      <section class="provider-picker" aria-labelledby="provider-picker-title">
+        <h2 id="provider-picker-title" class="provider-picker-title">Compare payment providers</h2>
+        <p class="provider-picker-lede">
+          A cursory review of the realistic options. Figures come from vendor documentation rather
+          than live accounts — see <code>docs/giving-setup.md</code> before deciding.
+        </p>
+
+        <div class="provider-tabs" role="tablist" aria-label="Payment provider">
+          {% for provider in giving.providers %}
+            <button
+              type="button"
+              role="tab"
+              id="tab-{{ provider.id }}"
+              class="provider-tab"
+              data-provider-tab="{{ provider.id }}"
+              aria-controls="panel-{{ provider.id }}"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              <span class="provider-tab-name">{{ provider.name }}</span>
+              <span class="provider-tab-fee">{{ provider.fee.label }}</span>
+            </button>
+          {% endfor %}
+        </div>
+
+        {% for provider in giving.providers %}
+          <div
+            class="provider-panel"
+            id="panel-{{ provider.id }}"
+            role="tabpanel"
+            aria-labelledby="tab-{{ provider.id }}"
+            data-provider-panel="{{ provider.id }}"
+            tabindex="0"
+            hidden
+          >
+            <p class="provider-tagline">{{ provider.tagline }}</p>
+
+            <dl class="provider-specs">
+              {% for spec in provider.specs %}
+                <div class="provider-spec is-{{ spec.status }}">
+                  <dt>{{ spec.label }}</dt>
+                  <dd>{{ spec.value }}</dd>
+                </div>
+              {% endfor %}
+            </dl>
+
+            {% if provider.caveats %}
+              <ul class="provider-caveats">
+                {% for caveat in provider.caveats %}
+                  <li>{{ caveat }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </section>
+
+      <h2 class="giving-form-title">
+        Donor experience with <span id="provider-name-inline">Stripe</span>
+      </h2>
 
       <form class="giving-form" id="giving-form" novalidate hidden>
         <fieldset class="field-group">
@@ -119,11 +180,12 @@ pageScripts:
               />
             </span>
           </label>
-          <label class="checkbox">
+          <label class="checkbox" id="cover-fees-field">
             <input type="checkbox" id="cover-fees" name="cover-fees" />
-            <span>
-              Add {{ giving.fee.percent }}% + ${{ giving.fee.fixedLabel }} so the parish receives my
-              full gift<span id="cover-fees-amount"></span>
+            <span id="cover-fees-label">
+              Cover the processing cost so the parish receives my full gift<span
+                id="cover-fees-amount"
+              ></span>
             </span>
           </label>
         </fieldset>
@@ -147,14 +209,69 @@ pageScripts:
         </fieldset>
 
         <fieldset class="field-group">
-          <legend>Card</legend>
-          <div id="card-element" class="card-element"></div>
-          <p class="field-error" id="card-errors" role="alert" hidden></p>
-          <p class="field-note">
-            Card details are entered directly into Stripe and never reach this website. In this
-            preview they are validated but never submitted — test with <code>4242 4242 4242 4242</code>,
-            any future expiry, and any CVC.
-          </p>
+          <legend id="payment-legend">Card</legend>
+
+          <div data-payment="stripe" hidden>
+            <div id="card-element" class="card-element"></div>
+            <p class="field-error" id="card-errors" role="alert" hidden></p>
+            <p class="field-note">
+              Card details are entered directly into Stripe and never reach this website. In this
+              preview they are validated but never submitted — test with
+              <code>4242 4242 4242 4242</code>, any future expiry, and any CVC.
+            </p>
+          </div>
+
+          <div data-payment="square" hidden>
+            <div class="card-element is-placeholder" aria-hidden="true">
+              <span class="placeholder-brand"></span>
+              <span class="placeholder-text">Card number</span>
+              <span class="placeholder-meta">MM / YY</span>
+              <span class="placeholder-meta">CVC</span>
+            </div>
+            <p class="field-note">
+              A static representation. Square's Web Payments SDK needs an application ID tied to a
+              real Square account, so unlike the Stripe panel this field is not a live element. The
+              donor experience is otherwise the same: a hosted donation link that accepts a
+              donor-chosen amount on a one-time <em>or recurring</em> schedule.
+            </p>
+          </div>
+
+          <div data-payment="iframe" hidden>
+            <div class="embed-placeholder">
+              <p><strong>Donorbox donation form</strong></p>
+              <p>
+                Donorbox is embedded as an <code>&lt;iframe&gt;</code>, so the donor never leaves
+                this page. The form itself — amount, frequency, card entry, receipts — is served and
+                operated by Donorbox, which holds the Stripe credentials on its own servers.
+              </p>
+              <p class="field-note">
+                Not embedded live here on purpose: a real Donorbox iframe would take real money for
+                whichever campaign it points at.
+              </p>
+            </div>
+          </div>
+
+          <div data-payment="zelle" hidden>
+            <div class="zelle-instructions">
+              <p>
+                Zelle has no form to embed. The donor opens their own banking app and sends the gift
+                directly to the parish, which is why it costs nothing to either side.
+              </p>
+              <dl class="receipt-list">
+                <dt>Send to</dt>
+                <dd id="zelle-handle">Not yet configured</dd>
+                <dt>Amount</dt>
+                <dd id="zelle-amount">Choose an amount above</dd>
+                <dt>Memo</dt>
+                <dd id="zelle-memo">—</dd>
+              </dl>
+              <p class="field-note" id="zelle-frequency-note"></p>
+              <p class="field-note">
+                Nothing here is automatic: no receipt is issued, and the treasurer matches the memo
+                line against the bank statement by hand.
+              </p>
+            </div>
+          </div>
         </fieldset>
 
         <p class="giving-summary" id="giving-summary" aria-live="polite"></p>
@@ -162,6 +279,9 @@ pageScripts:
         <button type="submit" class="button" id="giving-submit">
           <span id="giving-submit-label">Give</span>
         </button>
+        <p class="field-note" id="no-submit-note" hidden>
+          There is no button to press — the gift is sent from the donor's banking app.
+        </p>
       </form>
 
       <div class="giving-receipt" id="giving-receipt" role="status" hidden>

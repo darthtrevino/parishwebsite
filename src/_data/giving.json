@@ -5,15 +5,327 @@
   "publishableKey": "",
   "demo": {
     "enabled": true,
-    "note": "Renders an interactive mock of the checkout so the parish can review the donor experience before committing to a payment provider. No card is ever charged and the Stripe API is never called. `publishableKey` is Stripe's own sample TEST key from their public documentation; publishable keys are designed to be readable by anyone and cannot move money. Set `enabled` to false to hide the mock.",
-    "publishableKey": "pk_test_TYooMQauvdEDq54NiTphI7jx"
+    "note": "Renders an interactive mock of the checkout so the parish can review the donor experience and compare providers before committing. No card is ever charged and no payment API is called. `publishableKey` is Stripe's own sample TEST key from their public documentation; publishable keys are designed to be readable by anyone and cannot move money. Set `enabled` to false to hide the mock.",
+    "publishableKey": "pk_test_TYooMQauvdEDq54NiTphI7jx",
+    "defaultProvider": "stripe"
   },
-  "fee": {
-    "note": "Stripe's US nonprofit rate, used to calculate the optional 'cover processing costs' amount. `fixed` is in cents; `fixedLabel` is the same value formatted for display. Confirm the parish's actual rate before going live.",
-    "percent": 2.2,
-    "fixed": 30,
-    "fixedLabel": "0.30"
+  "zelle": {
+    "handle": "",
+    "note": "Set this to the email address or phone number enrolled with the parish bank account once Zelle is set up. Until it is filled in, the Zelle panel says so rather than inventing an address."
   },
+  "providersNote": "Comparison data for the provider selector on the Giving page. Cursory analysis, September 2026, verified against vendor documentation rather than live accounts — see docs/giving-setup.md. `status` drives the colour: yes / no / partial / info.",
+  "providers": [
+    {
+      "id": "stripe",
+      "name": "Stripe",
+      "checkout": "stripe",
+      "tagline": "Best engineering platform and by far the cheapest bank transfers, but it cannot do a donor-chosen monthly amount without a workaround.",
+      "fee": {
+        "percent": 2.2,
+        "fixed": 30,
+        "label": "2.2% + $0.30"
+      },
+      "specs": [
+        {
+          "label": "Card fee",
+          "value": "2.2% + $0.30 (non-profit rate)",
+          "status": "yes"
+        },
+        {
+          "label": "Bank transfer fee",
+          "value": "ACH 0.8%, capped at $5.00",
+          "status": "yes"
+        },
+        {
+          "label": "ACH / bank debit",
+          "value": "Supported",
+          "status": "yes"
+        },
+        {
+          "label": "API layer required",
+          "value": "No for Payment Links; yes to embed checkout on our own page",
+          "status": "partial"
+        },
+        {
+          "label": "Recurring donations",
+          "value": "Yes",
+          "status": "yes"
+        },
+        {
+          "label": "Donor-chosen recurring amount",
+          "value": "No — needs fixed tiers or a quantity workaround",
+          "status": "no"
+        },
+        {
+          "label": "Per-fund tracking",
+          "value": "One Payment Link per fund",
+          "status": "yes"
+        },
+        {
+          "label": "Automatic receipts",
+          "value": "Yes",
+          "status": "yes"
+        },
+        {
+          "label": "Donor self-service",
+          "value": "Customer Portal, no code",
+          "status": "yes"
+        },
+        {
+          "label": "Reversible",
+          "value": "Chargebacks apply",
+          "status": "info"
+        },
+        {
+          "label": "Per-transaction cap",
+          "value": "None for Payment Links",
+          "status": "yes"
+        },
+        {
+          "label": "Works on a static site",
+          "value": "Yes — redirect to a hosted page",
+          "status": "yes"
+        }
+      ],
+      "caveats": [
+        "Non-profit processing rates are lower than the list price above, but must be requested once the account is verified."
+      ]
+    },
+    {
+      "id": "square",
+      "name": "Square",
+      "checkout": "square",
+      "tagline": "The only one of the three that lets a donor name their own amount and repeat it monthly with no code — the exact gap Stripe has.",
+      "fee": {
+        "percent": 2.9,
+        "fixed": 30,
+        "label": "2.9% + $0.30"
+      },
+      "specs": [
+        {
+          "label": "Card fee",
+          "value": "2.9% + $0.30 online",
+          "status": "info"
+        },
+        {
+          "label": "Bank transfer fee",
+          "value": "Available; rate unverified",
+          "status": "partial"
+        },
+        {
+          "label": "ACH / bank debit",
+          "value": "Supported",
+          "status": "yes"
+        },
+        {
+          "label": "API layer required",
+          "value": "No for donation links",
+          "status": "yes"
+        },
+        {
+          "label": "Recurring donations",
+          "value": "Yes — donation links take a one-time or recurring frequency",
+          "status": "yes"
+        },
+        {
+          "label": "Donor-chosen recurring amount",
+          "value": "Yes",
+          "status": "yes"
+        },
+        {
+          "label": "Per-fund tracking",
+          "value": "One donation link per fund",
+          "status": "yes"
+        },
+        {
+          "label": "Automatic receipts",
+          "value": "Yes",
+          "status": "yes"
+        },
+        {
+          "label": "Donor self-service",
+          "value": "Yes",
+          "status": "yes"
+        },
+        {
+          "label": "Reversible",
+          "value": "Chargebacks apply",
+          "status": "info"
+        },
+        {
+          "label": "Per-transaction cap",
+          "value": "$5,000 per donation link payment",
+          "status": "partial"
+        },
+        {
+          "label": "Works on a static site",
+          "value": "Yes — redirect to a hosted page",
+          "status": "yes"
+        }
+      ],
+      "caveats": [
+        "The $5,000 cap could block a large building gift. Those would need an invoice instead.",
+        "Square's non-profit rate appears to apply to Invoices rather than to all online donations. Confirm before switching.",
+        "Best fit if the parish ever wants one system covering the bookstore, candle desk, and online giving."
+      ]
+    },
+    {
+      "id": "donorbox",
+      "name": "Donorbox",
+      "checkout": "iframe",
+      "tagline": "Rents someone else's backend. Everything works out of the box, including donor-chosen recurring, at the highest price of the four.",
+      "fee": {
+        "percent": 5.15,
+        "fixed": 30,
+        "label": "5.15% + $0.30"
+      },
+      "specs": [
+        {
+          "label": "Card fee",
+          "value": "2.95% Donorbox + 2.2% + $0.30 Stripe",
+          "status": "partial"
+        },
+        {
+          "label": "Bank transfer fee",
+          "value": "2.95% Donorbox + ACH 0.8%, capped at $5.00",
+          "status": "partial"
+        },
+        {
+          "label": "ACH / bank debit",
+          "value": "Supported, through Stripe",
+          "status": "yes"
+        },
+        {
+          "label": "API layer required",
+          "value": "No — Donorbox is the API layer",
+          "status": "yes"
+        },
+        {
+          "label": "Recurring donations",
+          "value": "Yes, including weekly and annual",
+          "status": "yes"
+        },
+        {
+          "label": "Donor-chosen recurring amount",
+          "value": "Yes",
+          "status": "yes"
+        },
+        {
+          "label": "Per-fund tracking",
+          "value": "Campaigns and designations",
+          "status": "yes"
+        },
+        {
+          "label": "Automatic receipts",
+          "value": "Yes, with year-end statements",
+          "status": "yes"
+        },
+        {
+          "label": "Donor self-service",
+          "value": "Donor portal",
+          "status": "yes"
+        },
+        {
+          "label": "Reversible",
+          "value": "Chargebacks apply",
+          "status": "info"
+        },
+        {
+          "label": "Per-transaction cap",
+          "value": "None",
+          "status": "yes"
+        },
+        {
+          "label": "Works on a static site",
+          "value": "Yes — an iframe that stays on our page",
+          "status": "yes"
+        }
+      ],
+      "caveats": [
+        "The 2.95% platform fee sits on top of Stripe's processing, so a $100 monthly tithe nets about $94.55 against roughly $97.50 on Stripe alone.",
+        "The Pro plan cuts the platform fee to 1.75% for $150 a month, which only breaks even above roughly $12,500 of donations a month — far beyond this parish.",
+        "This is how github.com/jeffch19/paal-nonprofit-website does recurring giving on GitHub Pages: it embeds a Donorbox iframe rather than integrating Stripe itself."
+      ]
+    },
+    {
+      "id": "zelle",
+      "name": "Zelle",
+      "checkout": "zelle",
+      "tagline": "Genuinely free, which is real money on large gifts — but it cannot be integrated into a website at all.",
+      "fee": {
+        "percent": 0,
+        "fixed": 0,
+        "label": "None"
+      },
+      "specs": [
+        {
+          "label": "Card fee",
+          "value": "No cards accepted",
+          "status": "no"
+        },
+        {
+          "label": "Bank transfer fee",
+          "value": "None",
+          "status": "yes"
+        },
+        {
+          "label": "ACH / bank debit",
+          "value": "It is a bank transfer",
+          "status": "yes"
+        },
+        {
+          "label": "API layer required",
+          "value": "No integration is possible at all",
+          "status": "no"
+        },
+        {
+          "label": "Recurring donations",
+          "value": "Only if the donor schedules it in their own bank app",
+          "status": "partial"
+        },
+        {
+          "label": "Donor-chosen recurring amount",
+          "value": "Yes, but the parish cannot set it up or change it",
+          "status": "partial"
+        },
+        {
+          "label": "Per-fund tracking",
+          "value": "Memo line, reconciled by hand",
+          "status": "no"
+        },
+        {
+          "label": "Automatic receipts",
+          "value": "None — the treasurer issues them manually",
+          "status": "no"
+        },
+        {
+          "label": "Donor self-service",
+          "value": "The donor's banking app",
+          "status": "info"
+        },
+        {
+          "label": "Reversible",
+          "value": "Irreversible — no chargebacks either way",
+          "status": "info"
+        },
+        {
+          "label": "Per-transaction cap",
+          "value": "Set by the donor's bank, often $1,000–$3,500 a day",
+          "status": "partial"
+        },
+        {
+          "label": "Works on a static site",
+          "value": "No form to embed; we publish an address",
+          "status": "no"
+        }
+      ],
+      "caveats": [
+        "A $5,000 building donation costs about $145 in card fees and nothing by Zelle, so it is worth publishing alongside a card option rather than instead of one.",
+        "Not all banks offer Zelle on business or non-profit accounts. Confirm with the parish bank first.",
+        "No donor data comes through, so gift-aid style records and year-end statements are entirely manual."
+      ]
+    }
+  ],
   "funds": [
     {
       "id": "tithe",
