@@ -1,0 +1,5 @@
+# The giving page is written and ready, but stays unpublished until the parish
+# decides to launch online giving. To publish it, delete the line below, re-add
+# the Giving entry to src/_data/navigation.json, and repoint the /store redirect
+# in src/static/_redirects. See docs/giving-setup.md.
+src/giving.njk

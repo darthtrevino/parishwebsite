@@ -33,6 +33,7 @@ Requires Node.js 22.6 or newer.
 
 - **[docs/content-guide.md](docs/content-guide.md)** — how to edit pages, post news, and update the
   calendar. Start here if you are not a developer.
+- **[docs/calendar-setup.md](docs/calendar-setup.md)** — how to connect the parish Google Calendar.
 - **[docs/giving-setup.md](docs/giving-setup.md)** — how to switch on online tithing with Stripe.
 - **[docs/deployment.md](docs/deployment.md)** — how to deploy and how to cut over from Squarespace.
 
@@ -40,7 +41,7 @@ Requires Node.js 22.6 or newer.
 
 ```
 src/
-  _data/           site.json, navigation.json, feasts.json, giving.json
+  _data/           site.json, navigation.json, giving.json, calendar.ts
   _includes/       layouts and partials
   assets/          css and images (copied to /assets)
   static/          robots.txt and _redirects (copied to the site root)
@@ -50,12 +51,13 @@ src/
   resources/       Bookstore, Lending Library, Chant, Streaming, Dates
   news/            one Markdown file per post
   index.njk        homepage
-  giving.njk       giving page
+  giving.njk       giving page (unpublished, see .eleventyignore)
 eleventy.config.ts
 ```
 
-Content lives in Markdown; structured data (service times, feast dates, giving funds) lives in JSON
-under `src/_data/` so it can be edited without touching templates.
+Content lives in Markdown; structured data (service times, giving funds) lives in JSON under
+`src/_data/`, so it can be edited without touching templates. The events calendar is fetched from
+the parish Google Calendar at build time by `src/_data/calendar.ts`.
 
 ## Conventions
 

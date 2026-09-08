@@ -5,19 +5,40 @@ lede: Feasts, fasts, and parish observances for the church year ahead.
 description: Calendar of Orthodox feasts, fasts, and parish events at Saint Elizabeth Orthodox Church in Poulsbo.
 ---
 
-<p>Our <a href="/what-we-do/worship/">regular weekly schedule</a> changes during certain seasons of the church year. Below are the fixed and movable observances for {{ feasts.year }}.</p>
+<p>Our <a href="/what-we-do/worship/">regular weekly schedule</a> changes during certain seasons of the church year. Below are the feasts, fasts, and parish events for the year ahead.</p>
 
-<ul class="calendar">
-  {% for item in feasts.dates %}
-    <li>
-      <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
-      <span>{{ item.title }}</span>
-      <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
-    </li>
-  {% endfor %}
-</ul>
+{% if not calendar.configured %}
+  <div class="notice">
+    <strong>The parish calendar is not connected yet.</strong>
+    Add the parish Google Calendar's ID to <code>googleCalendarId</code> in
+    <code>src/_data/site.json</code> and this page will fill itself in. See
+    <code>docs/calendar-setup.md</code> for step-by-step instructions.
+  </div>
+{% elif calendar.error %}
+  <div class="notice">
+    <strong>We could not load the calendar just now.</strong>
+    Please check back shortly, or call the parish at
+    <a href="tel:{{ site.phoneHref }}">{{ site.phone }}</a>.
+  </div>
+{% elif not calendar.events.length %}
+  <p>There are no events on the parish calendar for the coming year yet.</p>
+{% else %}
+  <ul class="calendar">
+    {% for item in calendar.events %}
+      <li>
+        <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
+        <span>
+          {{ item.title }}
+          {% if not item.allDay %}<span class="calendar-meta">{{ item.start | eventTime }}</span>{% endif %}
+          {% if item.location %}<span class="calendar-meta">{{ item.location }}</span>{% endif %}
+        </span>
+        <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
+      </li>
+    {% endfor %}
+  </ul>
 
-<p class="notice">
-  Dates are maintained in <code>src/_data/feasts.json</code>. Movable feasts follow the date of Pascha
-  and must be updated each year.
-</p>
+  <p class="small">
+    Times are {{ site.address.city }} local time. The calendar is maintained in Google Calendar; this
+    page updates on the next site build.
+  </p>
+{% endif %}

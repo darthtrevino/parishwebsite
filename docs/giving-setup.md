@@ -1,8 +1,11 @@
 # Online Giving Setup
 
-The [Giving](https://stelizabethorthodox.org/giving/) page is driven entirely by
-`src/_data/giving.json`. Until that file is filled in, the page shows the fund descriptions with
-"Coming soon" buttons and a notice for administrators.
+> **Status: the Giving page is not published.** The page is written and ready, but it is excluded
+> from the build via `.eleventyignore` until the parish decides to launch online giving. Follow
+> [Publishing the page](#publishing-the-page) at the end of this document to switch it on.
+
+The Giving page is driven entirely by `src/_data/giving.json`. Until that file is filled in, the
+page shows the fund descriptions with "Coming soon" buttons and a notice for administrators.
 
 We use **Stripe Payment Links**. This approach was chosen deliberately:
 
@@ -95,3 +98,24 @@ Squarespace Business/Commerce plans run roughly $276–$420 per year, and Square
 transaction fee on commerce plans below the top tier. This site's hosting on Netlify or Cloudflare
 Pages is **free** at parish traffic levels; the only remaining cost is domain renewal (~$20/year)
 and Stripe's per-transaction processing, which any provider charges.
+
+## Publishing the page
+
+The Giving page is deliberately unpublished. When the parish is ready to launch, do all four steps:
+
+1. **Include the page in the build.** Delete the `src/giving.njk` line from `.eleventyignore`.
+2. **Add it to the menu.** Add this entry back to `src/_data/navigation.json`, after Resources:
+   ```json
+   { "title": "Giving", "url": "/giving/" }
+   ```
+3. **Restore the redirect.** In `src/static/_redirects`, point the old Squarespace store URL at the
+   new page again:
+   ```
+   /store  /giving/  301
+   ```
+   (It currently points at `/what-we-do/charity/`.)
+4. **Re-add the in-page links.** The footer (`src/_includes/partials/footer.njk`), the 404 page
+   (`src/404.njk`), and the Charity page (`src/what-we-do/charity.md`) all had "Give online" links
+   removed. Add them back where they help.
+
+Then run `task build` and confirm `_site/giving/index.html` exists.

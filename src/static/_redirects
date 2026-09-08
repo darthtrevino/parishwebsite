@@ -16,6 +16,6 @@
 /liturgical-chant        /resources/liturgical-chant/        301
 /online-services         /resources/streaming/               301
 /upcoming-dates          /resources/dates-and-events/        301
-/store                   /giving/                            301
+/store                   /what-we-do/charity/                301
 /media                   /resources/streaming/               301
 /news/:year/:month/:day/:slug   /news/:slug/                 301

@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { pathToFileURL } from "node:url";
 import markdownIt from "markdown-it";
 import markdownItAnchor from "markdown-it-anchor";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
@@ -20,6 +21,10 @@ interface EleventyConfig {
   addFilter: (name: string, fn: (...args: never[]) => unknown) => void;
   addCollection: (name: string, fn: (api: CollectionApi) => unknown) => void;
   addGlobalData: (name: string, value: unknown) => void;
+  addDataExtension: (
+    extensions: string,
+    options: { parser: (contents: string, filePath: string) => unknown; read?: boolean },
+  ) => void;
   setLibrary: (name: string, library: unknown) => void;
   addShortcode: (name: string, fn: (...args: never[]) => string) => void;
 }
@@ -40,6 +45,17 @@ export default function configure(eleventyConfig: EleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/assets": "assets" });
   eleventyConfig.addPassthroughCopy({ "src/static": "." });
   eleventyConfig.addWatchTarget("src/assets/css/");
+
+  // Eleventy only discovers .js/.cjs/.mjs/.json data files out of the box, so
+  // register .ts as well. Node strips the types on import.
+  eleventyConfig.addDataExtension("ts", {
+    read: false,
+    parser: async (_contents: string, filePath: string) => {
+      const module = await import(pathToFileURL(filePath).href);
+      const value = module.default ?? module;
+      return typeof value === "function" ? await value() : value;
+    },
+  });
 
   eleventyConfig.setLibrary(
     "md",
@@ -71,6 +87,11 @@ export default function configure(eleventyConfig: EleventyConfig) {
 
   eleventyConfig.addFilter("feastDate", (value: string) =>
     DateTime.fromISO(value, { zone: site.timezone }).toFormat("LLL d"),
+  );
+
+  // Renders a timed calendar event's start as "6:30 PM"; all-day events omit it.
+  eleventyConfig.addFilter("eventTime", (value: string) =>
+    DateTime.fromISO(value, { zone: site.timezone }).toFormat("h:mm a"),
   );
 
   eleventyConfig.addFilter("limit", <T>(items: T[], count: number) => items.slice(0, count));

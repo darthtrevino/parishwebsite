@@ -19,7 +19,8 @@ need on the Kitsap Peninsula, administered by the rector.
 If you or someone you know is in need, please contact Father John at
 [{{ site.phone }}](tel:{{ site.phoneHref }}) or [{{ site.email }}](mailto:{{ site.email }}).
 
-If you would like to support this work, you can [give to the parish charity fund](/giving/).
+If you would like to support this work, please speak to Father John after any service, or contact
+him at [{{ site.phone }}](tel:{{ site.phoneHref }}) or [{{ site.email }}](mailto:{{ site.email }}).
 
 <div class="notice">
   <strong>Editor's note:</strong> this page is a starting point drawn from parish news archives. Please

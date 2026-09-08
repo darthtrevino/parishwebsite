@@ -26,14 +26,27 @@
     "directions": "Just off Highway 3 north of Poulsbo at Pioneer Way, next to Breidablik Cemetery."
   },
   "services": [
-    { "name": "Divine Liturgy", "day": "Sunday", "time": "10:00 a.m." },
-    { "name": "Daily Vespers", "day": "Wednesday", "time": "6:30 p.m." },
-    { "name": "Great Vespers / Resurrectional Vigil", "day": "Saturday", "time": "6:00 p.m." }
+    {
+      "name": "Divine Liturgy",
+      "day": "Sunday",
+      "time": "10:00 a.m."
+    },
+    {
+      "name": "Daily Vespers",
+      "day": "Wednesday",
+      "time": "6:30 p.m."
+    },
+    {
+      "name": "Great Vespers / Resurrectional Vigil",
+      "day": "Saturday",
+      "time": "6:00 p.m."
+    }
   ],
   "social": {
     "youtube": "https://www.youtube.com/@stelizabethorthodoxpoulsbo",
     "livestream": "https://www.youtube.com/@stelizabethorthodoxpoulsbo/streams",
     "facebook": "https://www.facebook.com/stelizabethorthodox.org/",
     "libraryThing": "https://www.librarything.com/profile/GrandDuchessLiz"
-  }
+  },
+  "googleCalendarId": ""
 }

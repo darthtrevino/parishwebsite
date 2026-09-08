@@ -15,7 +15,7 @@ A few things worth knowing:
   redirect you to the right place here.
 - **Service times are on every page.** You will find them in the footer, and in full on our
   [Worship](/what-we-do/worship/) page.
-- **Online giving is coming.** The new [Giving](/giving/) page will let you make one-time and
-  recurring offerings directly, without leaving the site.
+- **Online giving is coming.** We are working on a way to make one-time and recurring offerings from
+  the website. We will announce it here once it is ready.
 
 If you notice something missing or broken, please let Father John know.

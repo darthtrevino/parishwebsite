@@ -9,8 +9,8 @@ directly in GitHub's web editor.
 | -------------------------------------------------- | --------------------------------------------- |
 | Address, phone, email, service times, social links | `src/_data/site.json`                         |
 | Menu structure                                     | `src/_data/navigation.json`                   |
-| Feasts, fasts, and events calendar                 | `src/_data/feasts.json`                       |
-| Online giving funds and Stripe links               | `src/_data/giving.json`                       |
+| Feasts, fasts, and events calendar                 | the parish Google Calendar (see below)        |
+| Online giving funds and Stripe links               | `src/_data/giving.json` (page unpublished)    |
 | A regular page (e.g. Our Parish)                   | `src/who-we-are/our-parish.md` and neighbours |
 | The homepage                                       | `src/index.njk`                               |
 | News posts                                         | `src/news/*.md`                               |
@@ -72,8 +72,11 @@ To hide a post while you work on it, add `draft: true` to the front matter.
 
 ## Updating the calendar
 
-Open `src/_data/feasts.json` and edit the list. Each entry needs a date in `YYYY-MM-DD` form, a
-title, and a `kind`, which controls the coloured label:
+The calendar is not edited here at all. Add, move, or delete the event in the parish **Google
+Calendar** and it appears on the website the next time the site is built — both on the homepage and
+on Resources → Dates & Events.
+
+The coloured label on each event is worked out from words in the event's title:
 
 - `feast` — a great feast
 - `fast` — the start of a fasting season
@@ -81,8 +84,8 @@ title, and a `kind`, which controls the coloured label:
 - `patronal` — our patronal feast, July 18
 - `observance` — everything else
 
-Update `year` at the top of the file each autumn, and remember that movable feasts (Great Lent,
-Pascha, Ascension, Pentecost) shift every year with the date of Pascha.
+If an event shows the wrong label, rename it in Google Calendar. See
+[calendar-setup.md](calendar-setup.md) for the full keyword table and for first-time setup.
 
 ## Adding images
 

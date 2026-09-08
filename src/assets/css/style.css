@@ -741,6 +741,14 @@ a.card:hover {
   text-transform: uppercase;
 }
 
+.calendar-meta {
+  display: block;
+  color: var(--ink-faint);
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.4px;
+}
+
 .tag {
   padding: 0.2rem 0.65rem;
   border-radius: 999px;

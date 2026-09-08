@@ -79,7 +79,8 @@ permalink: /
   </div>
 </section>
 
-{% set upcoming = feasts.dates | limit(6) %}
+{% set upcoming = calendar.events | limit(6) %}
+{% if upcoming.length %}
 <section class="section">
   <div class="wrap">
     <h2 class="section-title">Parish Calendar</h2>
@@ -87,7 +88,10 @@ permalink: /
       {% for item in upcoming %}
         <li>
           <time datetime="{{ item.date }}">{{ item.date | feastDate }}</time>
-          <span>{{ item.title }}</span>
+          <span>
+            {{ item.title }}
+            {% if not item.allDay %}<span class="calendar-meta">{{ item.start | eventTime }}</span>{% endif %}
+          </span>
           <span class="tag tag-{{ item.kind }}">{{ item.kind }}</span>
         </li>
       {% endfor %}
@@ -95,6 +99,7 @@ permalink: /
     <p style="margin-top: 1.5rem;"><a class="text-link" href="/resources/dates-and-events/">Full calendar of feasts and fasts &rarr;</a></p>
   </div>
 </section>
+{% endif %}
 
 {% if collections.news.length %}
 <section class="section">
