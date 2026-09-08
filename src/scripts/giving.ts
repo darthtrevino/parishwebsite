@@ -2,7 +2,7 @@
  * Giving page — provider comparison and mock checkout.
  *
  * IMPORTANT: this is a prototype of the donor experience, not a working
- * payment form. It exists so the parish can compare Stripe, Square, Donorbox,
+ * payment form. It exists so the parish can compare Stripe, Square, PayPal,
  * and Zelle side by side and see how each one changes the flow and the fees.
  *
  * The form reshapes itself around what each provider can actually do, taken
@@ -20,14 +20,19 @@
  *               (ACH) tab, which is the cheapest rail for a regular tithe.
  *   - Square    Web Payments SDK, loaded only when an application ID and
  *               location ID are configured. Those are per-account values.
- *   - Donorbox  Its hosted form as an iframe, only when a campaign is set.
+ *   - PayPal    Donate SDK, loaded only when a hosted button ID is configured.
+ *               Alone among the four it needs no server even in production:
+ *               the donation happens in a PayPal popup, and a hosted button ID
+ *               is a public value rather than a secret.
  *   - Zelle     Nothing embeddable exists, so we show the exact details to
  *               copy into a banking app.
  *
  * No provider is ever charged. Taking money requires a server-side call with a
  * secret key (Stripe's PaymentIntent, Square's CreatePayment), and a static
  * site has none. Stripe's `elements.submit()` runs real validation but creates
- * no intent; Square's card is attached but `tokenize()` is never called.
+ * no intent; Square's card is attached but `tokenize()` is never called. PayPal
+ * is the exception that proves the rule: its popup could take a real gift, so
+ * the button stays dormant until the parish configures its own button ID.
  *
  * See docs/giving-setup.md for the routes to real payments.
  */
@@ -51,18 +56,18 @@ interface ProviderCapabilities {
   recurring: RecurringSupport;
   recurringNote: string;
   coverFees: boolean;
-  ui: "stripe-payment-element" | "square-web-payments" | "donorbox-iframe" | "none";
+  ui: "stripe-payment-element" | "square-web-payments" | "paypal-donate-sdk" | "none";
   uiNote: string;
 }
 
 interface GivingProvider {
   id: string;
   name: string;
-  checkout: "stripe" | "square" | "iframe" | "zelle";
+  checkout: "stripe" | "square" | "paypal" | "zelle";
   fee: ProviderFee;
   capabilities: ProviderCapabilities;
   square?: { environment: string; applicationId: string; locationId: string };
-  donorbox?: { campaign: string };
+  paypal?: { environment: string; hostedButtonId: string; business: string };
 }
 
 interface GivingConfig {
@@ -178,8 +183,9 @@ function start(): void {
   const squarePlaceholder = must<HTMLDivElement>(document, "#square-placeholder");
   const squareErrors = must<HTMLParagraphElement>(document, "#square-errors");
   const squareNote = must<HTMLParagraphElement>(document, "#square-note");
-  const donorboxMount = must<HTMLDivElement>(document, "#donorbox-embed");
-  const donorboxPlaceholder = must<HTMLDivElement>(document, "#donorbox-placeholder");
+  const paypalMount = must<HTMLDivElement>(document, "#paypal-donate-button");
+  const paypalPlaceholder = must<HTMLDivElement>(document, "#paypal-placeholder");
+  const paypalErrors = must<HTMLParagraphElement>(document, "#paypal-errors");
 
   const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>("[data-provider-tab]"));
   const panels = Array.from(document.querySelectorAll<HTMLElement>("[data-provider-panel]"));
@@ -301,27 +307,52 @@ function start(): void {
     }
   }
 
-  // -------------------------------------------------------------- Donorbox
+  // ---------------------------------------------------------------- PayPal
 
-  function mountDonorbox(): void {
-    const campaign = provider.donorbox?.campaign;
-    if (!campaign || donorboxMount.childElementCount > 0) return;
-    const iframe = document.createElement("iframe");
-    iframe.src = `https://donorbox.org/embed/${encodeURIComponent(campaign)}`;
-    iframe.name = "donorbox";
-    iframe.height = "900px";
-    iframe.width = "100%";
-    iframe.style.maxWidth = "500px";
-    iframe.style.minWidth = "250px";
-    iframe.style.maxHeight = "none";
-    iframe.allow = "payment";
-    iframe.setAttribute("seamless", "seamless");
-    iframe.setAttribute("frameborder", "0");
-    iframe.setAttribute("scrolling", "no");
-    iframe.title = "Donorbox donation form";
-    donorboxMount.append(iframe);
-    donorboxMount.hidden = false;
-    donorboxPlaceholder.hidden = true;
+  let paypalStarted = false;
+
+  /**
+   * PayPal's Donate SDK renders its own button, which opens a popup that
+   * handles amount, frequency, payment details and receipts. That is why this
+   * is the only provider here that would genuinely work in production on a
+   * static site: nothing secret is needed, only a public hosted button ID.
+   *
+   * The amount and fund chosen above are passed as `item_name` for the donor's
+   * receipt, but PayPal collects the amount itself inside the popup, so they
+   * are a starting point rather than something this page can enforce.
+   */
+  async function mountPayPal(): Promise<void> {
+    const settings = provider.paypal;
+    const identifier = settings?.hostedButtonId || settings?.business;
+    if (paypalStarted || !settings || !identifier) return;
+    paypalStarted = true;
+    try {
+      await loadScript("https://www.paypalobjects.com/donate/sdk/donate-sdk.js");
+      if (!window.PayPal) throw new Error("PayPal Donate SDK did not initialise");
+      const options: PayPalDonationButtonOptions = {
+        env: settings.environment === "sandbox" ? "sandbox" : "production",
+        item_name: fund.title,
+        image: {
+          src: "https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif",
+          title: "PayPal - The safer, easier way to pay online!",
+          alt: "Donate with PayPal button",
+        },
+        onComplete: (params) => {
+          showReceipt(params.tx ?? "PayPal donation");
+        },
+      };
+      if (settings.hostedButtonId) options.hosted_button_id = settings.hostedButtonId;
+      else options.business = settings.business;
+
+      window.PayPal.Donation.Button(options).render("#paypal-donate-button");
+      paypalMount.hidden = false;
+      paypalPlaceholder.hidden = true;
+    } catch (error) {
+      paypalStarted = false;
+      paypalErrors.textContent =
+        error instanceof Error ? error.message : "PayPal's donate button could not load.";
+      paypalErrors.hidden = false;
+    }
   }
 
   // --------------------------------------------------------------- render
@@ -472,17 +503,25 @@ function start(): void {
       : "";
 
     const isZelle = provider.checkout === "zelle";
-    submit.hidden = isZelle;
-    noSubmitNote.hidden = !isZelle;
-    donorEmail.required = !isZelle;
+    // PayPal brings its own button and collects the gift in its popup, so our
+    // submit would be a second, misleading way to "give".
+    const hasOwnButton = caps.ui === "paypal-donate-sdk";
+    const noSubmit = isZelle || hasOwnButton;
+    submit.hidden = noSubmit;
+    noSubmitNote.hidden = !noSubmit;
+    noSubmitNote.textContent = isZelle
+      ? "There is no button to press — the gift is sent from the donor's banking app."
+      : "The gift is completed in PayPal's own window, using the button above.";
+    donorEmail.required = !noSubmit;
 
     setError("");
     cardErrors.hidden = true;
     squareErrors.hidden = true;
+    paypalErrors.hidden = true;
 
     if (caps.ui === "stripe-payment-element") mountStripe();
     if (caps.ui === "square-web-payments") void mountSquare();
-    if (caps.ui === "donorbox-iframe") mountDonorbox();
+    if (caps.ui === "paypal-donate-sdk") void mountPayPal();
 
     const url = new URL(window.location.href);
     url.searchParams.set("provider", id);

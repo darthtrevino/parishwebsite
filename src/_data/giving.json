@@ -13,7 +13,7 @@
     "tag": "",
     "handle": "",
     "qr": "",
-    "note": "Zelle has no payment links, so nothing here can be a clickable button. Three things can be published, all optional. `tag` is a Zelle tag (a business handle like StElizabethOrthodox), which is the friendliest option and is set up in the parish bank app; it is preferred over `handle` when both are present. `handle` is the email address or U.S. mobile number enrolled with the parish bank account. `qr` is a site-relative path to the QR code image exported from the parish bank app, e.g. /assets/images/zelle-qr.png — it MUST be the bank-issued code, because the QR encodes a Zelle directory token that cannot be generated from an email address. Leave a value empty and its row is hidden rather than invented."
+    "note": "Zelle has no payment links, so nothing here can be a clickable button. Three things can be published, all optional. `tag` is a Zelle tag (a business handle like StElizabethOrthodox), which is the friendliest option and is set up in the parish bank app; it is preferred over `handle` when both are present. `handle` is the email address or U.S. mobile number enrolled with the parish bank account. `qr` is a site-relative path to the QR code image exported from the parish bank app, e.g. /assets/img/zelle-qr.png — it MUST be the bank-issued code, because the QR encodes a Zelle directory token that cannot be generated from an email address. Leave a value empty and its row is hidden rather than invented."
   },
   "providersNote": "Comparison data for the provider selector on the Giving page. Cursory analysis, September 2026, verified against vendor documentation rather than live accounts — see docs/giving-setup.md. `status` drives the colour: yes / no / partial / info. `capabilities.recurring` drives the form itself: \"yes\" offers a monthly option, \"no\" removes it, and \"donor-scheduled\" offers it but explains that the donor sets it up in their own bank app.",
   "providers": [
@@ -104,7 +104,7 @@
       "id": "square",
       "name": "Square",
       "checkout": "square",
-      "tagline": "The only one of the three that lets a donor name their own amount and repeat it monthly with no code — the exact gap Stripe has.",
+      "tagline": "Lets a donor name their own amount and repeat it monthly with no code — the gap Stripe has. Strongest option if the parish also wants one account for the bookstore and candle desk.",
       "fee": {
         "percent": 2.9,
         "fixed": 30,
@@ -192,92 +192,96 @@
       ]
     },
     {
-      "id": "donorbox",
-      "name": "Donorbox",
-      "checkout": "iframe",
-      "tagline": "Rents someone else's backend. Everything works out of the box, including donor-chosen recurring, at the highest price of the four.",
+      "id": "paypal",
+      "name": "PayPal",
+      "checkout": "paypal",
+      "tagline": "The only one of the four that takes a donor-chosen recurring gift with no server and no platform fee. Cheapest card rail too, once the parish is a confirmed charity.",
       "fee": {
-        "percent": 5.15,
-        "fixed": 30,
-        "label": "5.15% + $0.30"
+        "percent": 1.99,
+        "fixed": 49,
+        "label": "1.99% + $0.49"
       },
       "capabilities": {
         "recurring": "yes",
         "recurringNote": "",
         "coverFees": true,
-        "ui": "donorbox-iframe",
-        "uiNote": "Donorbox supplies the whole form as an iframe. It stays a placeholder until `donorbox.campaign` is set, so that nobody reviewing this preview can accidentally donate real money to somebody else's campaign."
+        "ui": "paypal-donate-sdk",
+        "uiNote": "PayPal's Donate SDK renders a real button from a hosted button ID, which is a public value rather than a secret. The donation itself happens in a PayPal popup, so no card details and no server are ever involved. It stays a placeholder until `paypal.hostedButtonId` is set, so nobody reviewing this preview can send real money to somebody else's account."
       },
-      "donorbox": {
-        "campaign": "",
-        "note": "The Donorbox campaign slug, i.e. the last path segment of https://donorbox.org/<campaign>. Leaving it empty keeps the panel as a description rather than a live donation form."
+      "paypal": {
+        "environment": "production",
+        "hostedButtonId": "",
+        "business": "",
+        "note": "Create the button at paypal.com/donate/buttons and copy its hosted_button_id (business accounts) or use `business` with the account email (personal accounts). Both are public values that appear in the page source by design, so neither is a secret. Enable the recurring option while creating the button: it cannot be turned on from here. Set environment to `sandbox` to test against sandbox.paypal.com."
       },
       "specs": [
         {
           "label": "Card fee",
-          "value": "2.95% Donorbox + 2.2% + $0.30 Stripe",
-          "status": "partial"
-        },
-        {
-          "label": "Bank transfer fee",
-          "value": "2.95% Donorbox + ACH 0.8%, capped at $5.00",
-          "status": "partial"
-        },
-        {
-          "label": "ACH / bank debit",
-          "value": "Supported, through Stripe",
+          "value": "1.99% + $0.49 confirmed charity, 2.89% + $0.49 otherwise",
           "status": "yes"
         },
         {
+          "label": "Bank transfer fee",
+          "value": "Same rate — a bank-funded PayPal gift costs the parish no extra",
+          "status": "yes"
+        },
+        {
+          "label": "ACH / bank debit",
+          "value": "Through the donor's PayPal balance or linked bank",
+          "status": "partial"
+        },
+        {
           "label": "API layer required",
-          "value": "No — Donorbox is the API layer",
+          "value": "No — the Donate SDK needs no server at all",
           "status": "yes"
         },
         {
           "label": "Recurring donations",
-          "value": "Yes, including weekly and annual",
+          "value": "Yes, monthly, chosen by the donor in the popup",
           "status": "yes"
         },
         {
           "label": "Donor-chosen recurring amount",
-          "value": "Yes",
+          "value": "Yes — the gap Stripe cannot close",
           "status": "yes"
         },
         {
           "label": "Per-fund tracking",
-          "value": "Campaigns and designations",
+          "value": "item_name and item_number per button",
           "status": "yes"
         },
         {
           "label": "Automatic receipts",
-          "value": "Yes, with year-end statements",
+          "value": "Yes, PayPal emails them",
           "status": "yes"
         },
         {
           "label": "Donor self-service",
-          "value": "Donor portal",
+          "value": "Donors cancel or change a recurring gift in their own PayPal account",
           "status": "yes"
         },
         {
           "label": "Reversible",
-          "value": "Chargebacks apply",
+          "value": "Disputes and chargebacks apply",
           "status": "info"
         },
         {
           "label": "Per-transaction cap",
-          "value": "None",
-          "status": "yes"
+          "value": "$10,000 per transaction on most accounts",
+          "status": "info"
         },
         {
           "label": "Works on a static site",
-          "value": "Yes — an iframe that stays on our page",
+          "value": "Yes — a popup from a public button ID",
           "status": "yes"
         }
       ],
       "caveats": [
-        "The 2.95% platform fee sits on top of Stripe's processing, so a $100 monthly tithe nets about $94.55 against roughly $97.50 on Stripe alone.",
-        "The Pro plan cuts the platform fee to 1.75% for $150 a month, which only breaks even above roughly $12,500 of donations a month — far beyond this parish.",
-        "This is how github.com/jeffch19/paal-nonprofit-website does recurring giving on GitHub Pages: it embeds a Donorbox iframe rather than integrating Stripe itself."
+        "The 1.99% rate needs PayPal confirmed charity status (PPCC), applied for at paypal.com/charities with proof of registration. Until it is granted the rate is 2.89% + $0.49, which is worse than Stripe.",
+        "Recurring has to be switched on when the button is created on PayPal's site. It is not a parameter the SDK can pass, so changing it later means making a new button.",
+        "The $0.49 fixed fee is larger than Stripe's or Square's $0.30, so PayPal is comparatively worse on small gifts and better on large ones. The crossover against Stripe is around $10.",
+        "Donors without a PayPal account can still pay by card in the popup, but the extra step costs some completion rate compared with a card field sitting on the page.",
+        "A donor-chosen amount is entered inside PayPal's popup rather than in the form above, so the amount and fund chosen on this page are passed as a starting point rather than enforced."
       ]
     },
     {

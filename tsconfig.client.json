@@ -14,6 +14,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/scripts/**/*.ts", "types/stripe-js.d.ts", "types/square-web-payments.d.ts"],
+  "include": [
+    "src/scripts/**/*.ts",
+    "types/stripe-js.d.ts",
+    "types/square-web-payments.d.ts",
+    "types/paypal-donate-sdk.d.ts"
+  ],
   "exclude": ["node_modules", "_site"]
 }

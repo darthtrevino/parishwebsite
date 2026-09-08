@@ -243,22 +243,26 @@ pageScripts:
             </p>
           </div>
 
-          <div data-payment="iframe" hidden>
-            <div id="donorbox-embed" hidden></div>
-            <div class="embed-placeholder" id="donorbox-placeholder">
-              <p><strong>Donorbox donation form</strong></p>
+          <div data-payment="paypal" hidden>
+            <div id="paypal-donate-button" hidden></div>
+            <div class="embed-placeholder" id="paypal-placeholder">
+              <p><strong>PayPal donate button</strong></p>
               <p>
-                Donorbox is embedded as an <code>&lt;iframe&gt;</code>, so the donor never leaves
-                this page. The form itself — amount, frequency, card entry, receipts — is served and
-                operated by Donorbox, which holds the Stripe credentials on its own servers. That is
-                why it can offer a donor-chosen monthly amount when Stripe alone cannot.
+                PayPal's Donate SDK renders a real button here, and the gift is completed in a
+                PayPal popup layered over this page. It is the only option of the four that would
+                work in production exactly as it stands: a hosted button ID is a
+                <em>public</em> value, so there is no secret to hide and no server to run — and
+                unlike Stripe, the donor can still choose their own amount on a monthly schedule.
               </p>
               <p class="field-note">
-                Not embedded live here on purpose: a real Donorbox iframe would take real money for
-                whichever campaign it points at. Set <code>donorbox.campaign</code> in
-                <code>src/_data/giving.json</code> to switch it on.
+                Not switched on here on purpose: a live button would take real money into whichever
+                account it names. Create one at
+                <code>paypal.com/donate/buttons</code>, turn on the recurring option while doing so,
+                and set <code>paypal.hostedButtonId</code> in
+                <code>src/_data/giving.json</code>.
               </p>
             </div>
+            <p class="field-error" id="paypal-errors" role="alert" hidden></p>
           </div>
 
           <div data-payment="zelle" hidden>

@@ -1,9 +1,9 @@
 # Online Giving Setup
 
-> **Status: preview only.** The Giving page is built and reachable at `/giving/`, but it is kept out
-> of the main navigation and **takes no payments**. It currently renders an interactive _mock_ of
-> the checkout so the parish council can review the donor experience before committing to a
-> provider. Follow [Publishing the page](#publishing-the-page) to launch it for real — but read
+> **Status: preview only.** The Giving page is linked from the main navigation at `/giving/`, but it
+> **takes no payments**. It currently renders an interactive _mock_ of the checkout so the parish
+> council can review the donor experience before committing to a provider. Follow
+> [Publishing the page](#publishing-the-page) to launch it for real — but read
 > [Known gaps](#known-gaps) first, because the monthly tithe flow shown in the mock is not something
 > Stripe Payment Links can do today.
 
@@ -21,7 +21,7 @@ The mock lives in `src/scripts/giving.ts` and is compiled to `_site/assets/js/gi
 `npm run build:scripts` (wired into `task build`). It exists to answer design questions — how many
 funds, what suggested amounts, whether to offer fee coverage — without setting up billing first.
 
-A **provider bar** at the top of the page switches between Stripe, Square, Donorbox, and Zelle. It
+A **provider bar** at the top of the page switches between Stripe, Square, PayPal, and Zelle. It
 changes both the specification panel and the donor experience below it, so the fee figures, the
 payment step, and the receipt all update to match the provider being considered. The selection is
 reflected in the URL (`/giving/?provider=square`), which makes it linkable in a council email.
@@ -31,11 +31,11 @@ reflected in the URL (`/giving/?provider=square`), which makes it linkable in a 
 The form is driven by the `capabilities` block on each provider in `src/_data/giving.json`, so it
 only ever offers what that provider can actually do. The important case is `capabilities.recurring`:
 
-| Value               | Provider         | Effect on the form                                                       |
-| ------------------- | ---------------- | ------------------------------------------------------------------------ |
-| `"no"`              | Stripe           | The monthly option is **removed**, with a note explaining why            |
-| `"yes"`             | Square, Donorbox | Monthly is offered normally                                              |
-| `"donor-scheduled"` | Zelle            | Monthly is offered but relabelled "Monthly (you set it up)", with a note |
+| Value               | Provider       | Effect on the form                                                       |
+| ------------------- | -------------- | ------------------------------------------------------------------------ |
+| `"no"`              | Stripe         | The monthly option is **removed**, with a note explaining why            |
+| `"yes"`             | Square, PayPal | Monthly is offered normally                                              |
+| `"donor-scheduled"` | Zelle          | Monthly is offered but relabelled "Monthly (you set it up)", with a note |
 
 Removing the option matters more than it sounds. Stripe Payment Links cannot combine a donor-chosen
 amount with a monthly schedule, so offering a Monthly button on the Stripe panel would demonstrate a
@@ -60,9 +60,14 @@ rather than a drawing of one.
   Those are per-account values from the Square Developer Console. Until then the panel shows a
   placeholder and says so. **Never commit a Square access token** — the application and location IDs
   are public client-side values, the access token is not.
-- **Donorbox — wired, dormant.** Setting `donorbox.campaign` embeds the real Donorbox iframe. It is
-  left empty on purpose: a live iframe in a public preview would let a reviewer donate real money to
-  whichever campaign it points at.
+- **PayPal — wired, dormant, and the only one that would ship as-is.** Setting
+  `paypal.hostedButtonId` renders PayPal's real **Donate SDK** button, which opens a PayPal popup
+  over the page to take the gift. A hosted button ID is a _public_ value — it is meant to appear in
+  page source — so unlike Stripe and Square there is nothing secret and no server needed even in
+  production. It is left empty on purpose, because a live button in a public preview would take real
+  money into whichever account it names. Verified in Chromium: the SDK renders the button and makes
+  exactly two network requests, both to `paypalobjects.com` (the SDK and the button image), and none
+  to any payment API.
 - **Zelle — no checkout, but a QR code.** Zelle has no embeddable widget and no payment link, so the
   panel shows the tag, handle, amount, and memo line with copy-to-clipboard buttons. If the parish
   publishes its bank-issued QR code (`zelle.qr`), it is shown too — that is the one thing on the
@@ -127,7 +132,7 @@ So a Payment Link can offer an open amount, or a monthly amount, but not both at
 proportion of income needs.
 
 The mock at `/giving/` reflects this: on the Stripe panel the monthly option is **removed** rather
-than offered, with the reason shown inline. Switch to Square or Donorbox and it reappears.
+than offered, with the reason shown inline. Switch to Square or PayPal and it reappears.
 
 Three ways around it, cheapest-to-build first:
 
@@ -151,38 +156,48 @@ Three ways around it, cheapest-to-build first:
   lives in the provider's dashboard. That is deliberate, but it means the treasurer works in two
   places unless we later add a church-management system.
 
-## Provider comparison: Stripe, Square, Donorbox, and Zelle
+## Provider comparison: Stripe, Square, PayPal, and Zelle
 
 Same cursory-analysis caveat as above. The interactive version of this table is on the
 [Giving page](../src/giving.njk) itself — the provider bar there switches both the specifications
 and the mock donor experience, so the council can see how each option actually feels and what each
 one costs on a real gift amount.
 
-|                                 | **Stripe**                         | **Square**                                                           | **Donorbox**                                | **Zelle**                                               |
-| ------------------------------- | ---------------------------------- | -------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------- |
-| Donor picks amount, one-time    | Yes                                | Yes                                                                  | Yes                                         | Yes                                                     |
-| **Donor picks amount, monthly** | **No** (see above)                 | **Yes** — donation links take a _Frequency_ of one-time or recurring | **Yes** — this is the product               | Donor-scheduled only; parish cannot set up or manage it |
-| Card fee                        | 2.9% + $0.30, 2.2% for non-profits | 2.9% + $0.30 online                                                  | **2.95% platform fee _plus_ Stripe's 2.2%** | n/a                                                     |
-| Bank-transfer fee               | ACH 0.8%, capped at $5.00          | ACH available; rate unverified                                       | 2.95% on top of ACH                         | **$0**                                                  |
-| In-person giving                | Terminal hardware                  | Strong — same account covers the bookstore and candle desk           | No                                          | Awkward                                                 |
-| Fits our static site            | Hosted link or redirect            | Hosted link or redirect                                              | Embedded iframe                             | No link or checkout; QR code and tag only               |
-| Per-fund tracking               | One link per fund                  | One link per fund                                                    | Campaigns and designations                  | Memo line, reconciled by hand                           |
-| Automatic receipts              | Yes                                | Yes                                                                  | Yes, with tax-receipt templates             | **No**                                                  |
-| Donor self-service              | Customer Portal, no code           | Yes                                                                  | Donor accounts included                     | Bank app                                                |
-| Reversible                      | Chargebacks apply                  | Chargebacks apply                                                    | Chargebacks apply                           | **Irreversible**                                        |
+|                                 | **Stripe**                         | **Square**                                                           | **PayPal**                                      | **Zelle**                                               |
+| ------------------------------- | ---------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| Donor picks amount, one-time    | Yes                                | Yes                                                                  | Yes                                             | Yes                                                     |
+| **Donor picks amount, monthly** | **No** (see above)                 | **Yes** — donation links take a _Frequency_ of one-time or recurring | **Yes** — enabled when the button is created    | Donor-scheduled only; parish cannot set up or manage it |
+| Card fee                        | 2.9% + $0.30, 2.2% for non-profits | 2.9% + $0.30 online                                                  | **1.99% + $0.49 confirmed charity**, else 2.89% | n/a                                                     |
+| Bank-transfer fee               | ACH 0.8%, capped at $5.00          | ACH available; rate unverified                                       | Same rate if the donor funds from a linked bank | **$0**                                                  |
+| **Server required**             | Yes, for recurring                 | Yes, to take payment                                                 | **No — the Donate SDK needs none**              | n/a                                                     |
+| In-person giving                | Terminal hardware                  | Strong — same account covers the bookstore and candle desk           | Card readers exist but are a weaker fit         | Awkward                                                 |
+| Fits our static site            | Hosted link or redirect            | Hosted link or redirect                                              | **Popup from a public button ID**               | No link or checkout; QR code and tag only               |
+| Per-fund tracking               | One link per fund                  | One link per fund                                                    | `item_name` per button                          | Memo line, reconciled by hand                           |
+| Automatic receipts              | Yes                                | Yes                                                                  | Yes                                             | **No**                                                  |
+| Donor self-service              | Customer Portal, no code           | Yes                                                                  | Donors manage it in their own PayPal account    | Bank app                                                |
+| Per-transaction cap             | None                               | **$5,000** on donation links                                         | $10,000 on most accounts                        | Donor's bank, often $1,000–$3,500/day                   |
+| Reversible                      | Chargebacks apply                  | Chargebacks apply                                                    | Disputes and chargebacks apply                  | **Irreversible**                                        |
 
 ### What a $100 monthly tithe actually nets the parish
 
-| Rail                | Parish receives |
-| ------------------- | --------------- |
-| Zelle               | $100.00         |
-| Stripe ACH          | ~$99.20         |
-| Stripe card         | ~$97.50         |
-| Square card         | ~$96.80         |
-| Donorbox (on cards) | ~$94.55         |
+| Rail                      | Parish receives |
+| ------------------------- | --------------- |
+| Zelle                     | $100.00         |
+| Stripe ACH                | ~$99.20         |
+| **PayPal (charity rate)** | **~$97.52**     |
+| Stripe card               | ~$97.50         |
+| Square card               | ~$96.80         |
+| PayPal (standard rate)    | ~$96.62         |
 
-Over a year, one such tithe is about $65 through Donorbox versus about $30 through Stripe card and
-about $10 through Stripe ACH. Multiply by the number of pledging households before deciding.
+PayPal's charity rate and Stripe's card rate are within two cents of each other on
+$100, so on cost
+alone they tie. They diverge at the extremes: PayPal's larger $0.49 fixed fee makes
+it worse on small gifts (the crossover against Stripe is around
+$10) and its lower percentage makes it better on
+large ones. Stripe ACH still beats both on any sizeable regular gift, but only with a server behind
+it. Over a year, a $100
+monthly tithe costs about $30 through PayPal or Stripe card, and about $10 through Stripe ACH.
+Multiply by the number of pledging households before deciding.
 
 ### Reading of the four
 
@@ -232,19 +247,37 @@ at a participating bank. Set `zelle.tag` and it is shown in place of the raw add
 All three are optional and independent. Anything left empty is hidden rather than filled with a
 placeholder, so the page never invites a donor to send money to an address that does not exist.
 
-**Donorbox** is a different kind of option: it is not a payment processor but a donation platform
-that sits on top of one. It solves the recurring-custom-amount problem outright and needs nothing
-but an `<iframe>`, so it works on a static site with no server and no secret key. The cost is a
-**2.95% platform fee charged on top of** whatever Stripe or PayPal takes underneath. The Pro plan
-drops that to 1.75% for $150 a month, which only pays for itself above roughly **$12,500 a month**
-in donations — far beyond this parish. Treat Donorbox as buying convenience, not processing.
+**PayPal** is the surprise of the four, and the reason Donorbox was dropped. It closes the same
+recurring-custom-amount gap Square does, but it is the only option here that needs **no server even
+in production**. PayPal's [Donate SDK](https://developer.paypal.com/sdk/donate/) renders a real
+button from a `hosted_button_id`, and that ID is a _public_ value by design — it is meant to sit in
+page source — so there is no secret to protect and nothing to deploy. The donation happens in a
+PayPal popup layered over the page, so card details never touch this site and PayPal handles
+receipts, recurring schedules, and donor self-service. Verified in Chromium: rendering the button
+made exactly two network requests, both to `paypalobjects.com`, and none to any payment API.
 
-> **Where this came from.** The repository
-> [`jeffch19/paal-nonprofit-website`](https://github.com/jeffch19/paal-nonprofit-website) looks at
-> first glance like a static Jekyll site doing recurring Stripe payments without a backend. It is
-> not: `index.html` embeds `<iframe src="https://donorbox.org/embed/…">`, and Donorbox holds the
-> Stripe credentials on its own servers. It is the rented backend, which confirms rather than
-> contradicts the analysis above — a static site still cannot charge a card by itself.
+If the parish is granted PayPal **confirmed charity status** (PPCC, applied for at
+[paypal.com/charities](https://www.paypal.com/charities)), the rate drops to **1.99% +
+$0.49**,
+confirmed on
+[PayPal's own fee page](https://www.paypal.com/us/business/paypal-business-fees). Until then it is
+2.89% + $0.49,
+which is worse than Stripe — so the charity application is the thing that makes this option
+attractive, and should be started early since it needs registration documents.
+
+Two real drawbacks. Recurring must be switched on **when the button is created** on PayPal's site;
+it is not an SDK parameter, so changing it later means making a new button. And donors without a
+PayPal account can pay by card in the popup but face an extra step, which costs some completion rate
+compared with a card field sitting directly on the page.
+
+> **Why not Donorbox.** An earlier revision of this document compared Donorbox as a fourth option,
+> on the strength of
+> [`jeffch19/paal-nonprofit-website`](https://github.com/jeffch19/paal-nonprofit-website), which
+> looks like a static site taking recurring Stripe payments but is really an
+> `<iframe src="https://donorbox.org/embed/…">` with Donorbox as the rented backend. Donorbox does
+> solve the problem, but it charges a **2.95% platform fee on top of** the underlying processor,
+> netting about $94.55 on a $100 gift. PayPal solves the same problem, from a static site, for about
+> $97.52 and no platform fee at all, so Donorbox was not competitive and has been removed.
 
 **Suggested shape:** pick one card/ACH rail for convenience and recurring gifts, and publish Zelle
 alongside it for large one-off gifts where the fee saving is material. That is a page-copy decision,
